@@ -4,7 +4,7 @@
 		
 		<!-- Custom types -->
 		
-		<!--Talkbox sheet-->
+		<!--Talkbox sheet type-->
 		<Item>10000000</Item>
 		<!--Players filter enum-->
 		<Item>10000001</Item>
@@ -20,6 +20,32 @@
 		<!--Talkbox close mode enum-->
 		<Item>10000006</Item>
 		
+		<!--X-tion type-->
+		<Item>20000001</Item>
+		<!--X-tion type ref-->
+		<Item>20000002</Item>
+		<!--Condition type-->
+		<Item>20000003</Item>
+		<!--IsHero... struct-->
+		<Item>20000004</Item>
+		<!--HasHero... struct-->
+		<Item>20000005</Item>
+		<!--DidHero... struct-->
+		<Item>20000006</Item>
+		<!--Exchangeables struct-->
+		<Item>20000007</Item>
+		<!--War machines struct-->
+		<Item>20000008</Item>
+		<!--Army creatures list type-->
+		<!-- <Item>20000009</Item> -->
+		<!--String array type-->
+		<!--Editor bugs for some reason when this type used <Item>20000010</Item> -->
+		<!--Action type-->
+		<Item>20000011</Item>
+		<!--Action show type-->
+		<Item>20000012</Item>
+		<!--Action show branched dialog type-->
+		<Item>20000013</Item>
 		
 		<!--Predefined types (DO NOT MODIFY)-->
 		<Item>950ad08f</Item>
@@ -2618,20 +2644,6 @@
 					</ComplexDefaultValue>
 				</Item>
 				<Item>
-					<Type>10000007</Type>
-					<Name>Test</Name>
-					<ChunkID>10</ChunkID>
-					<Description/>
-					<Constraints/>
-					<Attributes/>
-					<DefaultValue>
-						<Type>00000000</Type>
-					</DefaultValue>
-					<ComplexDefaultValue>
-						<Type>00000000</Type>
-					</ComplexDefaultValue>
-				</Item>
-				<Item>
 					<Type>05000000</Type>
 					<Name>Title</Name>
 					<ChunkID>2</ChunkID>
@@ -3192,6 +3204,20 @@
 						<Type>00000000</Type>
 					</ComplexDefaultValue>
 				</Item>
+				<Item>
+					<Type>20000002</Type>
+					<Name>OnChoose</Name>
+					<ChunkID>4</ChunkID>
+					<Description>Action on this answer choice</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
 			</Fields>
 		</Item>
 		<Item>
@@ -3427,6 +3453,567 @@
 					<Type>00000000</Type>
 				</ComplexDefaultValue>
 			</Field>
+		</Item>
+		
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000001</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>ScriptBase</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes>
+				<__ClassTypeID>270064327</__ClassTypeID>
+				<__ObjectData>
+					<Attributes>
+						<Item>
+							<Key>no_checksum</Key>
+							<Data>
+								<Type>03000000</Type>
+								<Data/>
+							</Data>
+						</Item>
+					</Attributes>
+				</__ObjectData>
+			</Attributes>
+			<BaseType>00000000</BaseType>
+			<NestedTypes/>
+			<Fields/>
+			<TypeID>-1</TypeID>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082828</__ClassTypeID>
+			<__ServerPtr>20000002</__ServerPtr>
+			<Type>TYPE_TYPE_REF</Type>
+			<RefType>20000001</RefType>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000003</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>Condition</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes>
+				<__ClassTypeID>270064327</__ClassTypeID>
+				<__ObjectData>
+					<Attributes>
+						<Item>
+							<Key>no_checksum</Key>
+							<Data>
+								<Type>03000000</Type>
+								<Data/>
+							</Data>
+						</Item>
+					</Attributes>
+				</__ObjectData>
+			</Attributes>
+			<BaseType>20000001</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>20000002</Type>
+					<Name>OnTrue</Name>
+					<ChunkID>2</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000002</Type>
+					<Name>OnFalse</Name>
+					<ChunkID>3</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000004</Type>
+					<Name>IsHero</Name>
+					<ChunkID>6</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000005</Type>
+					<Name>HasHero</Name>
+					<ChunkID>5</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000006</Type>
+					<Name>DidHero</Name>
+					<ChunkID>6</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+			<TypeID>900000001</TypeID>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000004</__ServerPtr>
+			<Type>TYPE_TYPE_STRUCT</Type>
+			<TypeName>IsHero</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>00000000</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>05000000</Type>
+					<Name>Name</Name>
+					<ChunkID>1</ChunkID>
+					<Description>Is this hero name the same as?</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>01000000</Type>
+					<Name>LevelHigherThan</Name>
+					<ChunkID>2</ChunkID>
+					<Description>Is hero level equal to or even higher than this value?</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000005</__ServerPtr>
+			<Type>TYPE_TYPE_STRUCT</Type>
+			<TypeName>HasHero</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>00000000</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>20000007</Type>
+					<Name>Any of</Name>
+					<ChunkID>2</ChunkID>
+					<Description>Does hero have ANY of the following?</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000007</Type>
+					<Name>All of</Name>
+					<ChunkID>3</ChunkID>
+					<Description>Does hero have ALL of the following? </Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000006</__ServerPtr>
+			<Type>TYPE_TYPE_STRUCT</Type>
+			<TypeName>DidHero</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>00000000</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>20000010</Type>
+					<Name>Visited</Name>
+					<ChunkID>1</ChunkID>
+					<Description>Objects required to be visited to suit condition</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000010</Type>
+					<Name>Defeated</Name>
+					<ChunkID>2</ChunkID>
+					<Description>List of objects to be captured/defeated to suit condition</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000007</__ServerPtr>
+			<Type>TYPE_TYPE_STRUCT</Type>
+			<TypeName>Exchangeables</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>00000000</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>20000009</Type>
+					<Name>Army creatures</Name>
+					<ChunkID>1</ChunkID>
+					<Description>Specific creatures in hero's army</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>910b88ae</Type>
+					<Name>Artifacts</Name>
+					<ChunkID>2</ChunkID>
+					<Description>Hero's artifacts</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>0802ca05</Type>
+					<Name>Resources</Name>
+					<ChunkID>3</ChunkID>
+					<Description>Hero's player resources</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>1e0dc5e0</Type>
+					<Name>Perks and skills</Name>
+					<ChunkID>4</ChunkID>
+					<Description>Hero's perks and skills</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>630a108d</Type>
+					<Name>Spells</Name>
+					<ChunkID>5</ChunkID>
+					<Description>Spells</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000008</Type>
+					<Name>WarMachines</Name>
+					<ChunkID>6</ChunkID>
+					<Description>War machines</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000008</__ServerPtr>
+			<Type>TYPE_TYPE_STRUCT</Type>
+			<TypeName>WarMachines</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>00000000</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>03000000</Type>
+					<Name>Ballista</Name>
+					<ChunkID>1</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>03000000</Type>
+					<Name>FirstAidTent</Name>
+					<ChunkID>2</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>03000000</Type>
+					<Name>AmmoCart</Name>
+					<ChunkID>3</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082827</__ClassTypeID>
+			<__ServerPtr>20000009</__ServerPtr>
+			<Type>TYPE_TYPE_ARRAY</Type>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<BoundTo>ArmyCreatures</BoundTo>
+			<Field>
+				<Type>3b03f30d</Type>
+				<Name/>
+				<ChunkID>-1</ChunkID>
+				<Description/>
+				<Constraints/>
+				<Attributes/>
+				<DefaultValue>
+					<Type>00000000</Type>
+				</DefaultValue>
+				<ComplexDefaultValue>
+					<Type>00000000</Type>
+				</ComplexDefaultValue>
+			</Field>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082827</__ClassTypeID>
+			<__ServerPtr>20000010</__ServerPtr>
+			<Type>TYPE_TYPE_ARRAY</Type>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<BoundTo>ObjectNamesList</BoundTo>
+			<Field>
+				<Type>05000000</Type>
+				<Name/>
+				<ChunkID>-1</ChunkID>
+				<Description>Object script name</Description>
+				<Constraints/>
+				<Attributes/>
+				<DefaultValue>
+					<Type>00000000</Type>
+				</DefaultValue>
+				<ComplexDefaultValue>
+					<Type>00000000</Type>
+				</ComplexDefaultValue>
+			</Field>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000011</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>Action</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes>
+				<__ClassTypeID>270064327</__ClassTypeID>
+				<__ObjectData>
+					<Attributes>
+						<Item>
+							<Key>no_checksum</Key>
+							<Data>
+								<Type>03000000</Type>
+								<Data/>
+							</Data>
+						</Item>
+					</Attributes>
+				</__ObjectData>
+			</Attributes>
+			<BaseType>20000001</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>20000002</Type>
+					<Name>OnEnd</Name>
+					<ChunkID>-1</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+			<TypeID>-1</TypeID>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000012</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>ActionShow</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes>
+				<__ClassTypeID>270064327</__ClassTypeID>
+				<__ObjectData>
+					<Attributes>
+						<Item>
+							<Key>no_checksum</Key>
+							<Data>
+								<Type>03000000</Type>
+								<Data/>
+							</Data>
+						</Item>
+					</Attributes>
+				</__ObjectData>
+			</Attributes>
+			<BaseType>20000011</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>10000001</Type>
+					<Name>PlayersFilter</Name>
+					<ChunkID>1</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>03000000</Type>
+						<Data>PLAYER_FILTER_ALL</Data>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+			<TypeID>-1</TypeID>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000013</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>ActionShowBranchedDialog</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes>
+				<__ClassTypeID>270064327</__ClassTypeID>
+				<__ObjectData>
+					<Attributes>
+						<Item>
+							<Key>no_checksum</Key>
+							<Data>
+								<Type>03000000</Type>
+								<Data/>
+							</Data>
+						</Item>
+					</Attributes>
+				</__ObjectData>
+			</Attributes>
+			<BaseType>20000012</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>10000005</Type>
+					<Name>StartSheet</Name>
+					<ChunkID>2</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+			<TypeID>900000002</TypeID>
 		</Item>
 			
 		
