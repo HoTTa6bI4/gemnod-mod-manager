@@ -5,6 +5,9 @@ All script bricks must be included in map file (*.h5m), and map file should be p
 
 Map patcher is provided with [GEMNOD modification](https://forum.heroesworld.ru/showthread.php?t=15368) and would be updated separately. Patcher mirror on [Google Disk](https://drive.google.com/file/d/1e5UhONxTfvon1zMGHCODa0fRZZZhyBQl/view).  
 
+## Usage
+Put 'types.xml' file into your ../GameFolder/data/. Run editor and enjoy!
+
 ## Current milestones
 Therefore currently we consider to add:
   - Multipage TalkBoxForPlayers wrap
