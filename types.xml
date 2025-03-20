@@ -13,12 +13,13 @@
 		<!--Replics struct-->
 		<Item>10000003</Item>
 		<!--Answers list-->
-		<Item>10000004</Item>
 		<!--<Item>10000004</Item>-->
 		<!--Talkbox sheet ref-->
 		<!-- <Item>10000005</Item> -->
 		<!--Talkbox close mode enum-->
 		<Item>10000006</Item>
+		<!--Replics list-->
+		<!-- <Item>10000007</Item> -->
 		
 		<!--X-tion type-->
 		<Item>20000001</Item>
@@ -48,6 +49,10 @@
 		<Item>20000013</Item>
 		<!--Action show linear (chain) dialog type-->
 		<Item>20000014</Item>
+		<!--Action show message type-->
+		<Item>20000015</Item>
+		<!--Action show flying sign type-->
+		<Item>20000016</Item>
 		
 		<!--Predefined types (DO NOT MODIFY)-->
 		<Item>950ad08f</Item>
@@ -4016,6 +4021,244 @@
 				</Item>
 			</Fields>
 			<TypeID>900000002</TypeID>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000014</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>ActionShowLinearDialog</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes>
+				<__ClassTypeID>270064327</__ClassTypeID>
+				<__ObjectData>
+					<Attributes>
+						<Item>
+							<Key>no_checksum</Key>
+							<Data>
+								<Type>03000000</Type>
+								<Data/>
+							</Data>
+						</Item>
+					</Attributes>
+				</__ObjectData>
+			</Attributes>
+			<BaseType>20000012</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>10000007</Type>
+					<Name>Sentences</Name>
+					<ChunkID>2</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+			<TypeID>900000003</TypeID>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000015</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>ActionShowMessage</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes>
+				<__ClassTypeID>270064327</__ClassTypeID>
+				<__ObjectData>
+					<Attributes>
+						<Item>
+							<Key>no_checksum</Key>
+							<Data>
+								<Type>03000000</Type>
+								<Data/>
+							</Data>
+						</Item>
+					</Attributes>
+				</__ObjectData>
+			</Attributes>
+			<BaseType>20000012</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>05000000</Type>
+					<Name>Text</Name>
+					<ChunkID>2</ChunkID>
+					<Description>Message text</Description>
+					<Constraints/>
+					<Attributes>
+						<__ClassTypeID>270064327</__ClassTypeID>
+						<__ObjectData>
+							<Attributes>
+								<Item>
+									<Key>stringParam</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data>editor:text, mask:Unicode text files (*.txt)|*.txt|All Files (*.*)|*.*||</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>filepath</Key>
+									<Data>
+										<Type>04000000</Type>
+										<Data>true</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>editorControl</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data>text_file</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>no_checksum</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data/>
+									</Data>
+								</Item>
+								<Item>
+									<Key>typeRename</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data>NFile::CFilePath</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>intParam</Key>
+									<Data>
+										<Type>01000000</Type>
+										<Data>2</Data>
+									</Data>
+								</Item>
+							</Attributes>
+						</__ObjectData>
+					</Attributes>
+				</Item>
+			</Fields>
+			<TypeID>900000004</TypeID>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000016</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>ActionShowFlyingSign</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes>
+				<__ClassTypeID>270064327</__ClassTypeID>
+				<__ObjectData>
+					<Attributes>
+						<Item>
+							<Key>no_checksum</Key>
+							<Data>
+								<Type>03000000</Type>
+								<Data/>
+							</Data>
+						</Item>
+					</Attributes>
+				</__ObjectData>
+			</Attributes>
+			<BaseType>20000012</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>05000000</Type>
+					<Name>Text</Name>
+					<ChunkID>3</ChunkID>
+					<Description>Flying sign text</Description>
+					<Constraints/>
+					<Attributes>
+						<__ClassTypeID>270064327</__ClassTypeID>
+						<__ObjectData>
+							<Attributes>
+								<Item>
+									<Key>stringParam</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data>editor:text, mask:Unicode text files (*.txt)|*.txt|All Files (*.*)|*.*||</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>filepath</Key>
+									<Data>
+										<Type>04000000</Type>
+										<Data>true</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>editorControl</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data>text_file</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>no_checksum</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data/>
+									</Data>
+								</Item>
+								<Item>
+									<Key>typeRename</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data>NFile::CFilePath</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>intParam</Key>
+									<Data>
+										<Type>01000000</Type>
+										<Data>2</Data>
+									</Data>
+								</Item>
+							</Attributes>
+						</__ObjectData>
+					</Attributes>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>01000000</Type>
+					<Name>Duration</Name>
+					<ChunkID>4</ChunkID>
+					<Description>Time till flying sign expiration</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>05000000</Type>
+					<Name>Target</Name>
+					<ChunkID>5</ChunkID>
+					<Description>Script name of object above which the text will appear</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+			<TypeID>900000005</TypeID>
 		</Item>
 			
 		
