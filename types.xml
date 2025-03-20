@@ -16,7 +16,7 @@
 		<Item>10000004</Item>
 		<!--<Item>10000004</Item>-->
 		<!--Talkbox sheet ref-->
-		<Item>10000005</Item>
+		<!-- <Item>10000005</Item> -->
 		<!--Talkbox close mode enum-->
 		<Item>10000006</Item>
 		
@@ -39,13 +39,15 @@
 		<!--Army creatures list type-->
 		<!-- <Item>20000009</Item> -->
 		<!--String array type-->
-		<!--Editor bugs for some reason when this type used <Item>20000010</Item> -->
+		<!--<Item>20000010</Item>-->
 		<!--Action type-->
 		<Item>20000011</Item>
 		<!--Action show type-->
 		<Item>20000012</Item>
 		<!--Action show branched dialog type-->
 		<Item>20000013</Item>
+		<!--Action show linear (chain) dialog type-->
+		<Item>20000014</Item>
 		
 		<!--Predefined types (DO NOT MODIFY)-->
 		<Item>950ad08f</Item>
