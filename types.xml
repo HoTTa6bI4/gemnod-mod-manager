@@ -12,13 +12,13 @@
 		<Item>10000002</Item>
 		<!--Replics struct-->
 		<Item>10000003</Item>
-		<!--Answers list-->
+		<!--Answers array-->
 		<!--<Item>10000004</Item>-->
 		<!--Talkbox sheet ref-->
 		<!-- <Item>10000005</Item> -->
 		<!--Talkbox close mode enum-->
 		<Item>10000006</Item>
-		<!--Replics list-->
+		<!--Replics array-->
 		<!-- <Item>10000007</Item> -->
 		
 		<!--X-tion type-->
@@ -37,9 +37,9 @@
 		<Item>20000007</Item>
 		<!--War machines struct-->
 		<Item>20000008</Item>
-		<!--Army creatures list type-->
+		<!--Army creatures array-->
 		<!-- <Item>20000009</Item> -->
-		<!--String array type-->
+		<!--String array-->
 		<!--<Item>20000010</Item>-->
 		<!--Action type-->
 		<Item>20000011</Item>
@@ -53,6 +53,12 @@
 		<Item>20000015</Item>
 		<!--Action show flying sign type-->
 		<Item>20000016</Item>
+		<!--Action update quest type-->
+		<Item>20000017</Item>
+		<!--Quest progress number struct-->
+		<Item>20000018</Item>
+		<!--Quest progresses number array-->
+		<!-- <Item>20000019</Item> -->
 		
 		<!--Predefined types (DO NOT MODIFY)-->
 		<Item>950ad08f</Item>
@@ -3590,7 +3596,7 @@
 			<TypeID>900000001</TypeID>
 		</Item>
 		<Item>
-			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ClassTypeID>270082825</__ClassTypeID>
 			<__ServerPtr>20000004</__ServerPtr>
 			<Type>TYPE_TYPE_STRUCT</Type>
 			<TypeName>IsHero</TypeName>
@@ -3630,7 +3636,7 @@
 			</Fields>
 		</Item>
 		<Item>
-			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ClassTypeID>270082825</__ClassTypeID>
 			<__ServerPtr>20000005</__ServerPtr>
 			<Type>TYPE_TYPE_STRUCT</Type>
 			<TypeName>HasHero</TypeName>
@@ -3670,7 +3676,7 @@
 			</Fields>
 		</Item>
 		<Item>
-			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ClassTypeID>270082825</__ClassTypeID>
 			<__ServerPtr>20000006</__ServerPtr>
 			<Type>TYPE_TYPE_STRUCT</Type>
 			<TypeName>DidHero</TypeName>
@@ -3710,7 +3716,7 @@
 			</Fields>
 		</Item>
 		<Item>
-			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ClassTypeID>270082825</__ClassTypeID>
 			<__ServerPtr>20000007</__ServerPtr>
 			<Type>TYPE_TYPE_STRUCT</Type>
 			<TypeName>Exchangeables</TypeName>
@@ -3806,7 +3812,7 @@
 			</Fields>
 		</Item>
 		<Item>
-			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ClassTypeID>270082825</__ClassTypeID>
 			<__ServerPtr>20000008</__ServerPtr>
 			<Type>TYPE_TYPE_STRUCT</Type>
 			<TypeName>WarMachines</TypeName>
@@ -3885,12 +3891,12 @@
 			<__ServerPtr>20000010</__ServerPtr>
 			<Type>TYPE_TYPE_ARRAY</Type>
 			<EnclosingNamespace>00000000</EnclosingNamespace>
-			<BoundTo>ObjectNamesList</BoundTo>
+			<BoundTo>StringList</BoundTo>
 			<Field>
 				<Type>05000000</Type>
 				<Name/>
 				<ChunkID>-1</ChunkID>
-				<Description>Object script name</Description>
+				<Description/>
 				<Constraints/>
 				<Attributes/>
 				<DefaultValue>
@@ -4260,7 +4266,159 @@
 			</Fields>
 			<TypeID>900000005</TypeID>
 		</Item>
-			
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000017</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>ActionUpdateObjectiveState</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>20000001</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>20000010</Type>
+					<Name>StartObjectives</Name>
+					<ChunkID>1</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000010</Type>
+					<Name>CompleteObjectives</Name>
+					<ChunkID>2</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000010</Type>
+					<Name>FailObjectives</Name>
+					<ChunkID>3</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000019</Type>
+					<Name>ProgressObjectives</Name>
+					<ChunkID>4</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+			<TypeID>90000006</TypeID>
+		</Item>	
+		<Item>
+			<__ClassTypeID>270082825</__ClassTypeID>
+			<__ServerPtr>20000018</__ServerPtr>
+			<Type>TYPE_TYPE_STRUCT</Type>
+			<TypeName>ObjectiveProgress</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>00000000</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>05000000</Type>
+					<Name>ObjectiveName</Name>
+					<ChunkID>1</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>01000000</Type>
+					<Name>ProgressNumber</Name>
+					<ChunkID>2</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes>
+						<__ClassTypeID>270064327</__ClassTypeID>
+						<__ObjectData>
+							<Attributes>
+								<Item>
+									<Key>stringParam</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data>min:0, max:20, step:1, page:1</Data>
+									</Data>
+								</Item>
+								<Item>
+									<Key>editorControl</Key>
+									<Data>
+										<Type>03000000</Type>
+										<Data>int_slider</Data>
+									</Data>
+								</Item>
+							</Attributes>
+						</__ObjectData>
+					</Attributes>
+					<DefaultValue>
+						<Type>01000000</Type>
+						<Data>1</Data>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+		</Item>	
+		<Item>
+			<__ClassTypeID>270082827</__ClassTypeID>
+			<__ServerPtr>20000019</__ServerPtr>
+			<Type>TYPE_TYPE_ARRAY</Type>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<BoundTo>ObjectiveProgressList</BoundTo>
+			<Field>
+				<Type>20000018</Type>
+				<Name/>
+				<ChunkID>-1</ChunkID>
+				<Description>Object script name</Description>
+				<Constraints/>
+				<Attributes/>
+				<DefaultValue>
+					<Type>00000000</Type>
+				</DefaultValue>
+				<ComplexDefaultValue>
+					<Type>00000000</Type>
+				</ComplexDefaultValue>
+			</Field>
+		</Item>
+		
+		
 		
 		
 		<!--Predefined game classes-->
