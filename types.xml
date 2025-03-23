@@ -59,6 +59,8 @@
 		<Item>20000018</Item>
 		<!--Quest progresses number array-->
 		<!-- <Item>20000019</Item> -->
+		<!--Action take and give type-->
+		<Item>20000020</Item>
 		
 		<!--Predefined types (DO NOT MODIFY)-->
 		<Item>950ad08f</Item>
@@ -4417,6 +4419,48 @@
 				</ComplexDefaultValue>
 			</Field>
 		</Item>
+		<Item>
+			<__ClassTypeID>270082826</__ClassTypeID>
+			<__ServerPtr>20000020</__ServerPtr>
+			<Type>TYPE_TYPE_CLASS</Type>
+			<TypeName>ActionTakeAndGive</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>20000001</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>20000007</Type>
+					<Name>Take</Name>
+					<ChunkID>1</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000007</Type>
+					<Name>Give</Name>
+					<ChunkID>2</ChunkID>
+					<Description/>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+			<TypeID>90000007</TypeID>
+		</Item>
+		
 		
 		
 		
