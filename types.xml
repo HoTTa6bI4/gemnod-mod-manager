@@ -35,6 +35,8 @@
 		<Item>20000006</Item>
 		<!--Exchangeables struct-->
 		<Item>20000007</Item>
+		<!--Exchangeables without skills and spells struct-->
+		<Item>20000021</Item>
 		<!--War machines struct-->
 		<Item>20000008</Item>
 		<!--Army creatures array-->
@@ -3034,7 +3036,7 @@
 				<Item>
 					<Name>PLAYER_FILTER_ALL</Name>
 					<!--Lua-value>255</Lua-value-->
-					<Value>0</Value>
+					<Value>255</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_1</Name>
@@ -3049,72 +3051,72 @@
 				<Item>
 					<Name>PLAYER_FILTER_3</Name>
 					<!--Lua-value>4</Lua-value-->
-					<Value>3</Value>
+					<Value>4</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_4</Name>
 					<!--Lua-value>8</Lua-value-->
-					<Value>4</Value>
+					<Value>8</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_5</Name>
 					<!--Lua-value>16</Lua-value-->
-					<Value>5</Value>
+					<Value>16</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_6</Name>
 					<!--Lua-value>32</Lua-value-->
-					<Value>6</Value>
+					<Value>32</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_7</Name>
 					<!--Lua-value>64</Lua-value-->
-					<Value>7</Value>
+					<Value>64</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_8</Name>
 					<!--Lua-value>128</Lua-value-->
-					<Value>8</Value>
+					<Value>128</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_TEAM_1</Name>
 					<!--Lua-value>-1</Lua-value-->
-					<Value>9</Value>
+					<Value>-1</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_TEAM_1</Name>
 					<!--Lua-value>-2</Lua-value-->
-					<Value>10</Value>
+					<Value>-2</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_TEAM_3</Name>
 					<!--Lua-value>-3</Lua-value-->
-					<Value>11</Value>
+					<Value>-3</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_TEAM_4</Name>
 					<!--Lua-value>-4</Lua-value-->
-					<Value>12</Value>
+					<Value>-4</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_TEAM_5</Name>
 					<!--Lua-value>-5</Lua-value-->
-					<Value>13</Value>
+					<Value>-5</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_TEAM_6</Name>
 					<!--Lua-value>-6</Lua-value-->
-					<Value>14</Value>
+					<Value>-6</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_TEAM_7</Name>
 					<!--Lua-value>-7</Lua-value-->
-					<Value>15</Value>
+					<Value>-7</Value>
 				</Item>
 				<Item>
 					<Name>PLAYER_FILTER_TEAM_8</Name>
 					<!--Lua-value>-8</Lua-value-->
-					<Value>16</Value>
+					<Value>-8</Value>
 				</Item>
 			</Entries>
 			<Attributes/>
@@ -3815,6 +3817,74 @@
 		</Item>
 		<Item>
 			<__ClassTypeID>270082825</__ClassTypeID>
+			<__ServerPtr>20000021</__ServerPtr>
+			<Type>TYPE_TYPE_STRUCT</Type>
+			<TypeName>TakenExchangeables</TypeName>
+			<EnclosingNamespace>00000000</EnclosingNamespace>
+			<Attributes/>
+			<BaseType>00000000</BaseType>
+			<NestedTypes/>
+			<Fields>
+				<Item>
+					<Type>20000009</Type>
+					<Name>ArmyCreatures</Name>
+					<ChunkID>1</ChunkID>
+					<Description>Specific creatures in hero's army</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>910b88ae</Type>
+					<Name>Artifacts</Name>
+					<ChunkID>2</ChunkID>
+					<Description>Hero's artifacts</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>0802ca05</Type>
+					<Name>Resources</Name>
+					<ChunkID>3</ChunkID>
+					<Description>Hero's player resources</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>20000008</Type>
+					<Name>WarMachines</Name>
+					<ChunkID>4</ChunkID>
+					<Description>War machines</Description>
+					<Constraints/>
+					<Attributes/>
+					<DefaultValue>
+						<Type>00000000</Type>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+			</Fields>
+		</Item>
+		<Item>
+			<__ClassTypeID>270082825</__ClassTypeID>
 			<__ServerPtr>20000008</__ServerPtr>
 			<Type>TYPE_TYPE_STRUCT</Type>
 			<TypeName>WarMachines</TypeName>
@@ -3975,13 +4045,28 @@
 				<Item>
 					<Type>10000001</Type>
 					<Name>PlayersFilter</Name>
-					<ChunkID>1</ChunkID>
 					<Description/>
+					<Constraints/>
+					<ChunkID>1</ChunkID>
+					<Attributes/>
+					<DefaultValue>
+						<Type>01000000</Type>
+						<Data>PLAYER_FILTER_ALL</Data>
+					</DefaultValue>
+					<ComplexDefaultValue>
+						<Type>00000000</Type>
+					</ComplexDefaultValue>
+				</Item>
+				<Item>
+					<Type>03000000</Type>
+					<Name>BeModal</Name>
+					<ChunkID>2</ChunkID>
+					<Description>Should following script wait until this ends showing?</Description>
 					<Constraints/>
 					<Attributes/>
 					<DefaultValue>
-						<Type>03000000</Type>
-						<Data>PLAYER_FILTER_ALL</Data>
+						<Type>04000000</Type>
+						<Data>true</Data>
 					</DefaultValue>
 					<ComplexDefaultValue>
 						<Type>00000000</Type>
@@ -4245,7 +4330,8 @@
 					<Constraints/>
 					<Attributes/>
 					<DefaultValue>
-						<Type>00000000</Type>
+						<Type>01000000</Type>
+						<Data>3</Data>
 					</DefaultValue>
 					<ComplexDefaultValue>
 						<Type>00000000</Type>
