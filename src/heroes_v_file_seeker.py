@@ -63,6 +63,12 @@ class HeroesVFileInspector:
                 except Exception as error:
                     print("<ERROR> Uknown error while parsing indexes database")
                     print("<ERROR", error, ">")
+        else:
+            # Create empty one for write
+            dirs, filename = os.path.split(indexed_places_file)
+            os.makedirs(dirs, exist_ok=True)
+            with open(indexed_places_file, 'w'):
+                pass
 
     def __getindex(self, hashsum):
         if hashsum in self.indexes_dictionary.keys():
@@ -171,10 +177,10 @@ class HeroesVFileInspector:
 if __name__ == "__main__":
     my_inspc = HeroesVFileInspector("S:\\Games\\Nival Interactive\\Heroes V Clear Version\\")
     now = time.time()
-    repeats = 100
-    file, mtime = [], 0.0
+    repeats = 1
+    file = []
     for i in range(repeats):
-        file, mtime = my_inspc.get("Folder/Text.txt")
+        file = my_inspc.get("Folder/Text.txt")
     print(f"{repeats} searches time: {time.time() - now} with {(time.time() - now)/repeats} average search time")
     my_inspc.indexnewplaces()
     my_inspc.writeindexes()
