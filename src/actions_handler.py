@@ -238,13 +238,7 @@ class ActionShowMessage(ActionShow):
 
         following = self.onend()
         if following is not None:
-            # If following (OnEnd) action set, check modality
-            #
-            modality = self.root.find("BeModal").text
-            message_box_script = ''
-
-            # Behaviour for modal call
-            if modality == 'true':
+            if self.modal == 'true':
                 following_script = following.toscript(indentation_level, brackets_level+1)
                 script_contents.append(tab + f'MessageBoxForPlayers({self.players_filter},'
                                              f' "{txt_reference}" {open_bracket}')
@@ -252,8 +246,7 @@ class ActionShowMessage(ActionShow):
                 script_contents.append(tab + f'return parse(\"\") {close_bracket}) '
                                              f'-- MessageBox callback waits for function() call')
                 pass
-            # Behaviour for non-modal call
-            elif modality == 'false':
+            elif self.modal == 'false':
                 following_script = following.toscript(indentation_level, brackets_level)
                 script_contents.append(tab + f'MessageBoxForPlayers({self.players_filter},'
                                              f' "{txt_reference}")')
@@ -269,6 +262,9 @@ class ActionShowFlyingSign(ActionShow):
 
     def toscript(self, indentation_level=1, brackets_level=0):
 
+        tab = '\t' * indentation_level
+        script_contents = []
+
         # Sign text
         Text = self.root.find("Text")
         if 'href' not in Text.attrib:
@@ -282,9 +278,17 @@ class ActionShowFlyingSign(ActionShow):
 
         Target = self.root.find("Target").text
         if Target is None:
-            raise ParseError(1, f"ActionShowFlyingSign has no object script name! Failed in: '{self.name}'")
+            Target = self.hero
+        else:
+            Target = "\'" + Target + "\'"
 
-        return ['\t' * indentation_level + f'ShowFlyingSign("{txt_reference}", \'{Target}\', player, {Duration})']
+        script_contents.append(tab + f'ShowFlyingSign("{txt_reference}", {Target}, player, {Duration})')
+
+        following = self.onend()
+        if following is not None:
+            script_contents += following.toscript(indentation_level + 1, brackets_level)
+
+        return script_contents
 
 
 class ActionShowBranchedDialog(ActionShow):
@@ -442,11 +446,16 @@ class ActionShowBranchedDialog(ActionShow):
         script_contents += script_sheet_contents
         script_contents.append(tab + '-- Finally, call dialog creator to run.')
         script_contents.append(tab + '--')
+
         if self.modal == 'true':
-            script_contents.append(tab + 'BranchedDialog.new(' + script_table_field + ', callback)')
+            if following is not None:
+                script_contents.append(tab + 'BranchedDialog.new(' + script_table_field + ', callback)')
+            else:
+                script_contents.append(tab + 'BranchedDialog.new(' + script_table_field + ')')
         elif self.modal == 'false':
             script_contents.append(tab + 'BranchedDialog.new(' + script_table_field + ')')
-            script_contents.append(tab + "callback()")
+            if following is not None:
+                script_contents.append(tab + "callback()")
 
         return script_contents
 
@@ -454,7 +463,48 @@ class ActionShowBranchedDialog(ActionShow):
 class ActionShowLinearDialog(ActionShow):
 
     def toscript(self, indentation_level=1, brackets_level=0):
-        return []
+        tab = '\t' * indentation_level
+        script_contents = []
+
+        following = self.onend()
+        if following is not None:
+            script_contents.append(tab + '-- Functions to be called after whole LinearDialog ends')
+            script_contents.append(tab + 'local callback = function()')
+            script_contents += following.toscript(indentation_level + 1)
+            script_contents.append(tab + 'end')
+
+        script_contents.append(tab + 'local sentences = {')
+
+        i = 1
+        for sentence in self.root.findall("Sentences/Item"):
+            Icon = sentence.find("Icon")
+            Text = sentence.find("Text")
+            Title = sentence.find("Title")
+            if 'href' in Icon.attrib.keys() and 'href' in Text.attrib.keys() and 'href' in Title.attrib.keys():
+                icon = self.make_absolute(Icon.attrib['href'])
+                text = self.make_absolute(Text.attrib['href'])
+                title = self.make_absolute(Title.attrib['href'])
+                script_contents.append(tab + '\t' + f'[{i:2}]' + " = {icon  = \'" + icon + "\', ")
+                script_contents.append(tab + '\t' + 8*' ' + "title = \'" + title + "\', ")
+                script_contents.append(tab + '\t' + 8*' ' + "text  = \'" + text + "\'},")
+            else:
+                raise ParseError(1, f"Invalid sentence in ActionShowLinearDialog (no icon or text set)! "
+                                    f"Failed in: {self.name}")
+            i += 1
+
+        script_contents.append(tab + '}')
+
+        if self.modal == 'true':
+            if following is not None:
+                script_contents.append(tab + 'Dialog.new(sentences, callback)')
+            else:
+                script_contents.append(tab + 'Dialog.new(sentences)')
+        elif self.modal == 'false':
+            script_contents.append(tab + 'Dialog.new(sentences)')
+            if following is not None:
+                script_contents.append(tab + "callback()")
+
+        return script_contents
 
 
 if __name__ == '__main__':
@@ -464,13 +514,13 @@ if __name__ == '__main__':
     heroesVinspector = HeroesVFileInspector(game_folder)
     types = TypesXmlHandler(heroesVinspector)
 
-    cond = Condition('TalkboxSheets/Demo/Condition.(Condition).xdb', heroesVinspector, types)
+    cond = Condition('/Scripts/Conditions/Demo/TestConditon.(Condition).xdb', heroesVinspector, types)
 
     sheet = ActionShowBranchedDialog('/TalkboxSheets/Demo/StartSmth.(ActionShowBranchedDialog).xdb',
                                      heroesVinspector, types)
 
-    # for line in cond.toscript():
-    #     print(line)
-
-    for line in sheet.toscript(1):
+    for line in cond.toscript():
         print(line)
+
+    # for line in sheet.toscript(1):
+    #     print(line)
