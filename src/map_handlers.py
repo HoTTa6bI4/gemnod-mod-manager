@@ -1,4 +1,5 @@
 import shutil
+import zipfile
 from zipfile import ZipFile
 from xml.etree import ElementTree as ET
 import os
@@ -23,7 +24,7 @@ def extractMapRoot(map_file_path):
                 # or
                 #   Maps/Multiplayer/.../map.xdb
                 #
-                if match(r"^Maps/(SingleMissions|Multiplayer)/[a-zA-Z0-9_~.]+/map\.xdb$", filename):
+                if match(r"^Maps/(SingleMissions|Multiplayer)/[a-zA-Z0-9_~.\s]+/map\.xdb$", filename):
                     map_xdb = MapArchive.open(filename, "r")
                     contents = list(map(lambda bstr: bstr.decode("UTF-8").replace('\r\n', '\n'), map_xdb.readlines()))
                     map_xdb.close()
@@ -69,7 +70,7 @@ def addMapScript(map_file_path, script_template=""):
         if not MapScriptRef.startswith("/"):
             MapScriptRef = os.path.join(map_xdb_rel_dir, MapScriptRef)
 
-        lines, time = ArchivesSeeker(map_file_dir, ".h5m").getLastVersionOf(MapScriptRef)
+        lines = ArchivesSeeker(map_file_dir, ".h5m").getfile(MapScriptRef)
 
         if lines is None:
             is_valid_script = False
@@ -94,8 +95,9 @@ def addMapScript(map_file_path, script_template=""):
         print(f"> Created new {new_script_filename}")
 
         with ZipFile(map_file_path, "a") as MapArchive:
-            MapArchive.write(new_map_filename, arcname=map_xdb_path)
-            MapArchive.write(new_script_filename, arcname=os.path.join(map_xdb_rel_dir, new_script_filename))
+            MapArchive.write(new_map_filename, arcname=map_xdb_path, compress_type=zipfile.ZIP_DEFLATED)
+            MapArchive.write(new_script_filename, arcname=os.path.join(map_xdb_rel_dir, new_script_filename),
+                             compress_type=zipfile.ZIP_DEFLATED)
 
 
     else:
@@ -104,7 +106,7 @@ def addMapScript(map_file_path, script_template=""):
 
 if __name__ == '__main__':
     addMapScript(
-        "S:\\Games\\Nival Interactive\\Heroes of Might and Magic V - Tribes of the East\\Maps\\temp\\Map.h5m",
+        "S:\\Games\\Nival Interactive\\Heroes V Clear Version\\Maps\\temp\\Map.h5m",
         script_template=[
             '<?xml version="1.0" encoding="UTF-8"?>\n',
             '<Script>\n',
