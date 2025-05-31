@@ -8,7 +8,7 @@ from parse_error import ParseError
 global_types = globals()
 
 
-def string_array_hash(lines):
+def stringArrayHash(lines):
     return md5(''.join(lines).encode('UTF-8', errors='ignore')).hexdigest()
 
 
@@ -53,25 +53,25 @@ class XmlScriptBrick:
 
         # Recursive actions defend:
         #
-        hash = string_array_hash(contents)
+        hash = stringArrayHash(contents)
 
         if hash in self.usecases_table:
             raise RecursionError(812, f"Recursive .(Action) objects referring. Check links logic. Failed in: '{ref}'")
         else:
             self.usecases_table.add(hash)
 
-    def make_absolute(self, ref):
+    def makeAbsolute(self, ref):
         ref = ref.replace('\\', '/')
         if not ref.startswith('/'):
             ref = '/' + os.path.join(self.context, ref)
         return ref.replace('\\', '/')
 
-    def getchildbrick(self, child_brick):
+    def getChildBrick(self, child_brick):
         if child_brick is not None:
             if 'href' in child_brick.attrib:
                 xpointer = child_brick.attrib['href']
                 file_ref = xpointer.split("#xpointer")[0].replace("\\", "/")
-                file_ref = self.make_absolute(file_ref)
+                file_ref = self.makeAbsolute(file_ref)
 
                 new_context = os.path.split(file_ref)[0]
 
@@ -83,13 +83,13 @@ class XmlScriptBrick:
         else:
             raise AttributeError("Invalid tag for child xpointer!")
 
-    def toscript(self, indentation_level=1, brackets_level=0):
+    def toScript(self, indentation_level=1, brackets_level=0):
         pass
 
 
 class Condition(XmlScriptBrick):
 
-    def toscript(self, indentation_level=1, brackets_level=0):
+    def toScript(self, indentation_level=1, brackets_level=0):
 
         tab = '\t' * indentation_level
 
@@ -183,13 +183,13 @@ class Condition(XmlScriptBrick):
 
         # Create callback on statement is truth
         #
-        script_contents_on_true = self.getchildbrick(self.root.find("OnTrue"))
+        script_contents_on_true = self.getChildBrick(self.root.find("OnTrue"))
         if script_contents_on_true is not None:
             script_contents += script_contents_on_true.toscript(indentation_level + 1)
 
         # Create callback on statement is lie
         #
-        script_contents_on_false = self.getchildbrick(self.root.find("OnFalse"))
+        script_contents_on_false = self.getChildBrick(self.root.find("OnFalse"))
         if script_contents_on_false is not None:
             script_contents.append(tab + 'else')
             script_contents += script_contents_on_false.toscript(indentation_level + 1)
@@ -203,10 +203,10 @@ class Condition(XmlScriptBrick):
 
 class Action(XmlScriptBrick):
 
-    def onend(self):
+    def onEnd(self):
         # Get OnEnd action reference
         #
-        return self.getchildbrick(self.root.find("OnEnd"))
+        return self.getChildBrick(self.root.find("OnEnd"))
 
 
 class ActionShow(Action):
@@ -223,7 +223,7 @@ class ActionShow(Action):
 
 class ActionShowMessage(ActionShow):
 
-    def toscript(self, indentation_level=1, brackets_level=0):
+    def toScript(self, indentation_level=1, brackets_level=0):
         tab = '\t' * indentation_level
         open_bracket = '[' + brackets_level * '=' + '['
         close_bracket = ']' + brackets_level * '=' + ']'
@@ -232,11 +232,11 @@ class ActionShowMessage(ActionShow):
         if 'href' not in Text.attrib:
             raise ParseError(1, f"ActionShowMessage has no reference to text file! Failed in: '{self.name}'")
         txt_reference = Text.attrib['href']
-        txt_reference = self.make_absolute(txt_reference)
+        txt_reference = self.makeAbsolute(txt_reference)
 
         script_contents = []
 
-        following = self.onend()
+        following = self.onEnd()
         if following is not None:
             if self.modal == 'true':
                 following_script = following.toscript(indentation_level, brackets_level+1)
@@ -260,7 +260,7 @@ class ActionShowMessage(ActionShow):
 
 class ActionShowFlyingSign(ActionShow):
 
-    def toscript(self, indentation_level=1, brackets_level=0):
+    def toScript(self, indentation_level=1, brackets_level=0):
 
         tab = '\t' * indentation_level
         script_contents = []
@@ -270,7 +270,7 @@ class ActionShowFlyingSign(ActionShow):
         if 'href' not in Text.attrib:
             raise ParseError(1, f"ActionShowFlyingSign has no reference to text file! Failed in: '{self.name}'")
         txt_reference = Text.attrib['href']
-        txt_reference = self.make_absolute(txt_reference)
+        txt_reference = self.makeAbsolute(txt_reference)
 
         Duration = self.root.find("Duration").text
         if Duration is None:
@@ -284,7 +284,7 @@ class ActionShowFlyingSign(ActionShow):
 
         script_contents.append(tab + f'ShowFlyingSign("{txt_reference}", {Target}, player, {Duration})')
 
-        following = self.onend()
+        following = self.onEnd()
         if following is not None:
             script_contents += following.toscript(indentation_level + 1, brackets_level)
 
@@ -302,7 +302,7 @@ class ActionShowBranchedDialog(ActionShow):
         keys.append(name.split('.')[0])
         return keys
 
-    def parsesheet(self, talkboxsheet, indentation_level=1, brackets_level=0):
+    def parseSheet(self, talkboxsheet, indentation_level=1, brackets_level=0):
         pass
         tab = '\t' * indentation_level
         tab_plus = '\t' + tab
@@ -327,13 +327,13 @@ class ActionShowBranchedDialog(ActionShow):
         Icon = TalkboxSheet.find("Icon")
         if 'href' in Icon.attrib:
             icon_path = Icon.attrib['href']
-            script_contents.append(tab + '\t' + 'icon = "' + self.make_absolute(icon_path) + '",')
+            script_contents.append(tab + '\t' + 'icon = "' + self.makeAbsolute(icon_path) + '",')
 
         # Talkbox title (mustn't be empty)
         Title = TalkboxSheet.find("Title")
         text_path = Title.attrib['href']
         if text_path != "":
-            script_contents.append(tab + '\t' + 'title = "' + self.make_absolute(text_path) + '",')
+            script_contents.append(tab + '\t' + 'title = "' + self.makeAbsolute(text_path) + '",')
         else:
             raise ParseError(1, f"TalkboxSheet no title set! Failed in: {self.name}")
 
@@ -341,7 +341,7 @@ class ActionShowBranchedDialog(ActionShow):
         Text = TalkboxSheet.find("Text")
         text_path = Text.attrib['href']
         if text_path != "":
-            script_contents.append(tab + '\t' + 'text = "' + self.make_absolute(text_path) + '",')
+            script_contents.append(tab + '\t' + 'text = "' + self.makeAbsolute(text_path) + '",')
         else:
             raise ParseError(1, f"TalkboxSheet no main text set! Failed in: {self.name}")
 
@@ -354,19 +354,19 @@ class ActionShowBranchedDialog(ActionShow):
         IconTooltip = TalkboxSheet.find("IconTooltip")
         text_path = IconTooltip.attrib['href']
         if text_path != "":
-            script_contents.append(tab + '\t' + 'iconTooltip = "' + self.make_absolute(text_path) + '",')
+            script_contents.append(tab + '\t' + 'iconTooltip = "' + self.makeAbsolute(text_path) + '",')
 
         # Talkbox selection text (could be empty)
         SelectionText = TalkboxSheet.find("SelectionText")
         text_path = SelectionText.attrib['href']
         if text_path != "":
-            script_contents.append(tab + '\t' + 'selectionText = "' + self.make_absolute(text_path) + '",')
+            script_contents.append(tab + '\t' + 'selectionText = "' + self.makeAbsolute(text_path) + '",')
 
         # Talkbox additional text (could be empty)
         AdditionalText = TalkboxSheet.find("AdditionalText")
         text_path = AdditionalText.attrib['href']
         if text_path != "":
-            script_contents.append(tab + '\t' + 'additionalText = "' + self.make_absolute(text_path) + '",')
+            script_contents.append(tab + '\t' + 'additionalText = "' + self.makeAbsolute(text_path) + '",')
 
         script_contents.append(tab + '\t' + 'options = {')
         # Add options info
@@ -385,10 +385,10 @@ class ActionShowBranchedDialog(ActionShow):
             text_path = AnswerText.attrib['href']
             if text_path == "":
                 raise ParseError(1, f"Empty option text! Failed in: {self.name}")
-            text_path = self.make_absolute(text_path)
+            text_path = self.makeAbsolute(text_path)
             script_contents.append(tab + 3*'\t' + "optionText = \"" + text_path + '\",')
 
-            action = self.getchildbrick(item.find("OnChoose"))
+            action = self.getChildBrick(item.find("OnChoose"))
             if action is not None:
                 script_contents.append(tab + 3*'\t' + "action = function()")
                 script_contents += action.toscript(indentation_level+4, brackets_level)
@@ -398,8 +398,8 @@ class ActionShowBranchedDialog(ActionShow):
             if 'href' in FollowingSheet.attrib:
                 xpointer = FollowingSheet.attrib['href']
                 file_ref = xpointer.split("#xpointer")[0].replace("\\", "/")
-                file_ref = self.make_absolute(file_ref)
-                following_sheet_table_field, following_script_contents = self.parsesheet(file_ref,
+                file_ref = self.makeAbsolute(file_ref)
+                following_sheet_table_field, following_script_contents = self.parseSheet(file_ref,
                                                                                          indentation_level,
                                                                                          brackets_level)
                 script_contents.append(tab + 3*'\t' + "following = '" + following_sheet_table_field + "',")
@@ -418,14 +418,14 @@ class ActionShowBranchedDialog(ActionShow):
 
         return script_table_field, script_contents
 
-    def toscript(self, indentation_level=1, brackets_level=0):
+    def toScript(self, indentation_level=1, brackets_level=0):
 
         tab = '\t' * indentation_level
         script_contents = []
 
         # Final callback on whole branched dialog ends
         #
-        following = self.onend()
+        following = self.onEnd()
         if following is not None:
             script_contents.append(tab + '-- Functions to be called after whole BranchDialog ends')
             script_contents.append(tab + 'local callback = function()')
@@ -435,8 +435,8 @@ class ActionShowBranchedDialog(ActionShow):
         FollowingSheet = self.root.find("StartSheet")
         if 'href' in FollowingSheet.attrib:
             sheet_ref = FollowingSheet.attrib['href'].split("#xpointer")[0]
-            sheet_ref = self.make_absolute(sheet_ref)
-            script_table_field, script_sheet_contents = self.parsesheet(sheet_ref, indentation_level, brackets_level)
+            sheet_ref = self.makeAbsolute(sheet_ref)
+            script_table_field, script_sheet_contents = self.parseSheet(sheet_ref, indentation_level, brackets_level)
         else:
             raise ParseError(1, f"Branched dialog has no start sheet! Failed in: {self.name}")
 
@@ -462,11 +462,11 @@ class ActionShowBranchedDialog(ActionShow):
 
 class ActionShowLinearDialog(ActionShow):
 
-    def toscript(self, indentation_level=1, brackets_level=0):
+    def toScript(self, indentation_level=1, brackets_level=0):
         tab = '\t' * indentation_level
         script_contents = []
 
-        following = self.onend()
+        following = self.onEnd()
         if following is not None:
             script_contents.append(tab + '-- Functions to be called after whole LinearDialog ends')
             script_contents.append(tab + 'local callback = function()')
@@ -481,9 +481,9 @@ class ActionShowLinearDialog(ActionShow):
             Text = sentence.find("Text")
             Title = sentence.find("Title")
             if 'href' in Icon.attrib.keys() and 'href' in Text.attrib.keys() and 'href' in Title.attrib.keys():
-                icon = self.make_absolute(Icon.attrib['href'])
-                text = self.make_absolute(Text.attrib['href'])
-                title = self.make_absolute(Title.attrib['href'])
+                icon = self.makeAbsolute(Icon.attrib['href'])
+                text = self.makeAbsolute(Text.attrib['href'])
+                title = self.makeAbsolute(Title.attrib['href'])
                 script_contents.append(tab + '\t' + f'[{i:2}]' + " = {icon  = \'" + icon + "\', ")
                 script_contents.append(tab + '\t' + 8*' ' + "title = \'" + title + "\', ")
                 script_contents.append(tab + '\t' + 8*' ' + "text  = \'" + text + "\'},")
@@ -507,6 +507,119 @@ class ActionShowLinearDialog(ActionShow):
         return script_contents
 
 
+class AdvMapObjectBase(XmlScriptBrick):
+
+    def getPos(self):
+        Position = self.root.find("Pos")
+        X, Y, Z = Position.find("x"), Position.find("y"), Position.find("z")
+        x, y, z = float(X.text), float(Y.text), float(Z.text)
+        Floor = self.root.find("Floor")
+        f = int(Floor.text)
+        return x, y, z, f
+
+    def getScriptName(self):
+        ScriptName = self.root.find("Name")
+        object_script_name = ""
+        if ScriptName.text is None:
+            raise ParseError(f"Object has no custom script name! Failed in {self.name}")
+            # x, y, z, fl = self.getPos()
+            # object_script_name = type(self).__name__ + "_" + str(int(x)) + "_" + str(int(y)) + "_" + str(int(z))
+            # if fl == 0:
+            #     object_script_name += "_ground"
+            # elif fl == 1:
+            #     object_script_name += "_underground"
+            # else:
+            #     raise ParseError(f"Invalid object floor type! Failed in: {self.name}")
+        else:
+            object_script_name = ScriptName.text
+
+        return object_script_name
+
+    def __getValidScriptName(self):
+        from re import match, sub
+        valid_string = sub(r"[^A-Za-z0-9_]", '', self.getScriptName())
+        if match(r"^[0-9]", valid_string):
+            valid_string = valid_string[1:]
+        if valid_string == "":
+            raise ValueError(f"No valid script name could be constructed! Failed in {self.name}")
+        return valid_string
+
+
+class AdvMapInteractiveBase(AdvMapObjectBase):
+
+    def onTouch(self):
+        return self.getChildBrick(self.root.find("Behaviour/OnTouch"))
+
+    def onRemove(self):
+        return self.getChildBrick(self.root.find("Behaviour/OnRemove"))
+
+    def toScript(self, indentation_level=1, brackets_level=0):
+
+        tab = '\t' * indentation_level
+        script_contents = []
+
+        variable_name = self.__getValidScriptName()
+        object_script_name = self.getScriptName()
+
+        action_on_touch = self.onTouch()
+
+        if action_on_touch is not None:
+            script_contents += map(lambda s: tab + s, [
+                "-- Touch handler",
+                f"function {variable_name}_onTouch(hero, object)",
+                *action_on_touch.toScript(indentation_level + 1, brackets_level),
+                "end",
+                "",
+                f"AddEventHandler(EVENT_OBJECT_TOUCHED, '{object_script_name}', \"{variable_name}_onTouch\")",
+                "--"
+            ])
+
+        action_on_remove = self.onRemove()
+        if action_on_remove is not None:
+            script_contents += map(lambda s: tab + s, [
+                "-- Touch handler",
+                f"function {variable_name}_onRemove(hero, object)",
+                *action_on_touch.toScript(indentation_level + 1, brackets_level),
+                "end",
+                "",
+                f"AddEventHandler(EVENT_OBJECT_REMOVED, '{object_script_name}', {variable_name}_onRemove)",
+                "--"
+            ])
+
+        return script_contents
+
+
+class AdvMapInteractiveAndOwnedBase(AdvMapInteractiveBase):
+
+    def onCapture(self):
+        return self.getChildBrick(self.root.find("Behaviour/OnCapture"))
+
+    def toScript(self, indentation_level=1, brackets_level=0):
+        script_contents_old = super().toScript(indentation_level, brackets_level)
+
+        tab = '\t' * indentation_level
+        script_contents = []
+
+        variable_name = self.__getValidScriptName()
+        object_script_name = self.getScriptName()
+
+        action_on_capture = self.onCapture()
+        if action_on_capture is not None:
+            script_contents += map(lambda s: tab + s, [
+                "-- Touch handler",
+                f"function {variable_name}_onCapture(hero, object, old_owner, new_owner)",
+                *action_on_capture.toScript(indentation_level + 1, brackets_level),
+                "end",
+                "",
+                f"AddEventHandler(EVENT_OBJECT_CAPTURED, '{object_script_name}', {variable_name}_onCapture)",
+                "--"
+            ])
+
+        script_contents += script_contents_old
+
+        return script_contents
+
+
 if __name__ == '__main__':
 
     game_folder = "S:/Games/Nival Interactive/Heroes V Clear Version/"
@@ -514,13 +627,13 @@ if __name__ == '__main__':
     heroesVinspector = HeroesVFileInspector(game_folder)
     types = TypesXmlHandler(heroesVinspector)
 
-    cond = Condition('/Scripts/Conditions/Demo/TestConditon.(Condition).xdb', heroesVinspector, types)
+    # cond = Condition('/Scripts/Conditions/Demo/TestConditon.(Condition).xdb', heroesVinspector, types)
 
-    sheet = ActionShowBranchedDialog('/TalkboxSheets/Demo/StartSmth.(ActionShowBranchedDialog).xdb',
-                                     heroesVinspector, types)
+    # sheet = ActionShowBranchedDialog('/TalkboxSheets/Demo/StartSmth.(ActionShowBranchedDialog).xdb',
+    #                                  heroesVinspector, types)
 
-    for line in cond.toscript():
-        print(line)
+    # for line in cond.toScript():
+    #     print(line)
 
     # for line in sheet.toscript(1):
     #     print(line)
