@@ -25,6 +25,17 @@ def filehash(file_path):
 
 class HeroesVFileInspector:
 
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(HeroesVFileInspector, cls).__new__(cls)
+            print("New instance created.")
+        return cls._instance
+
+    def instance(self=None):
+        return HeroesVFileInspector._instance
+
     inspected_folders = [
         "data"
     ]
@@ -47,6 +58,7 @@ class HeroesVFileInspector:
         return False
 
     def __init__(self, game_root, indexed_places_file=default_indexed_places):
+        print("Instance inited.")
         self.game_root = game_root
         if not self.__isheroesv():
             raise NotADirectoryError("Current directory is not a Heroes V game folder!")
@@ -124,7 +136,7 @@ class HeroesVFileInspector:
 
         return contents
 
-    def indexnewplaces(self):
+    def indexNewPlaces(self):
         # print(f"> Indexing: {self.unindexed_places}")
         for place in self.unindexed_places:
             # Index dir name is idexed file hash
@@ -152,9 +164,9 @@ class HeroesVFileInspector:
             print(f"> Created index for {place}...")
             writer.commit()
 
-        self.writeindexes()
+        self.writeIndexes()
 
-    def writeindexes(self):
+    def writeIndexes(self):
         with open(self.indexed_places_file, 'w') as indexes_file:
             for key, value in self.indexes_dictionary.items():
                 string = str(key) + ' ' + str(value) + '\r'
@@ -163,7 +175,7 @@ class HeroesVFileInspector:
 
     def flush(self):
         # Find unknown indexes
-        # Remove unknkown indexes
+        # Remove unknown indexes
         for dir in os.listdir(self.indexes_dir):
             to_del = True
             for index_dir in self.indexes_dictionary.values():
@@ -175,13 +187,17 @@ class HeroesVFileInspector:
 
 
 if __name__ == "__main__":
-    my_inspc = HeroesVFileInspector("S:\\Games\\Nival Interactive\\Heroes V Clear Version\\")
+    # my_inspc = HeroesVFileInspector("S:\\Games\\Nival Interactive\\Heroes V Clear Version\\")
+    # my_inspc2 = HeroesVFileInspector("S:\\Games\\Nival Interactive\\Heroes of Might and Magic V\\")
+    my_inspc3 = HeroesVFileInspector.instance()
+    # print(my_inspc is my_inspc2)
+    print(my_inspc3 is not None)
     now = time.time()
     repeats = 1
     file = []
-    for i in range(repeats):
-        file = my_inspc.get("Folder/Text.txt")
-    print(f"{repeats} searches time: {time.time() - now} with {(time.time() - now)/repeats} average search time")
-    my_inspc.indexnewplaces()
-    my_inspc.writeindexes()
-    my_inspc.flush()
+    # for i in range(repeats):
+    #     file = my_inspc.get("Folder/Text.txt")
+    # print(f"{repeats} searches time: {time.time() - now} with {(time.time() - now)/repeats} average search time")
+    # my_inspc.indexNewPlaces()
+    # my_inspc.writeIndexes()
+    # my_inspc.flush()
