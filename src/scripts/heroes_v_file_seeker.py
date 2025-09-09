@@ -45,7 +45,7 @@ class HeroesVFileInspector:
         # ("UserCampaigns", ".h5c"),
     ]
 
-    indexes_dir = '../index/indexes/'
+    indexes_dir = '../../index/indexes/'
 
     tables = {
         "artifacts": {'ids': {}, 'server_ptr': '7b059128'},
