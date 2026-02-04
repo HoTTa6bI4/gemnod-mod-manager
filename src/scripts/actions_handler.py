@@ -12,22 +12,6 @@ def stringArrayHash(lines):
     return md5(''.join(lines).encode('UTF-8', errors='ignore')).hexdigest()
 
 
-# Creating action instance according to its reference File.xdb#xpointer(/Action)
-def classInstanceByXpointerType(xpointer):
-    if "#n:inline" in xpointer:
-        base = xpointer.split("#n:inline")[1]
-    elif "#xpointer" in xpointer:
-        base = xpointer.split("#xpointer")[1]
-    else:
-        raise AttributeError("Invalid xpointer! (" + xpointer + ")")
-    class_name = base.replace('(/', '').replace('(', '').replace(')', '')
-    cls = global_types.get(class_name)
-    if cls is not None:
-        return cls
-    else:
-        raise AttributeError("Invalid xpointer class! (" + class_name + ")")
-
-
 """ Classes related to XDB-bricks for Heroes V lua scripts """
 
 
@@ -76,15 +60,6 @@ class XmlScriptBrick:
 
         return cls(ET.fromstringlist(contents), inspector, name, context, usecases_table, hero_variable_name)
 
-    def makeAbsolute(self, ref):
-        ref = ref.replace('\\', '/')
-        if not ref.startswith('/'):
-            if not self.context.startswith('/'):
-                ref = '/' + os.path.join(self.context, ref)
-            else:
-                ref = os.path.join(self.context, ref)
-        return ref.replace('\\', '/')
-
     def getChildBrick(self, child_element: ET.Element):
         if child_element is not None:
             if 'href' in child_element.keys():
@@ -101,8 +76,7 @@ class XmlScriptBrick:
                                                  self.usecases_table, self.hero)
                 # Reference
                 else:
-                    file_ref = href.split("#xpointer")[0].replace("\\", "/")
-                    file_ref = self.makeAbsolute(file_ref)
+                    file_ref = fileReferenceByXpointerType(self.context, href)
                     return following_brick_class.fromGameFile(file_ref, self.inspector,
                                                               self.usecases_table, self.hero)
             else:
@@ -650,8 +624,9 @@ if __name__ == '__main__':
     sheet = TalkboxSheet.fromGameFile(file_rel_path="/TalkboxSheets/Demo/Root.(TalkboxSheet).xdb",
                                       inspector=heroesVinspector)
 
-    asbd = ActionShowBranchedDialog.fromGameFile(file_rel_path="/TalkboxSheets/Demo/StartSmth.(ActionShowBranchedDialog).xdb",
-                                                 inspector=heroesVinspector)
+    asbd = ActionShowBranchedDialog.fromGameFile(
+        file_rel_path="/TalkboxSheets/Demo/StartSmth.(ActionShowBranchedDialog).xdb",
+        inspector=heroesVinspector)
 
     # for line in cond.toScript():
     #     print(line)

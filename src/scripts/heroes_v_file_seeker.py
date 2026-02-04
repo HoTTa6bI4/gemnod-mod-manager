@@ -11,7 +11,7 @@ default_indexed_places = "../index/index.db"
 
 
 def filehash(file_path):
-    if os.path.isfile(file_path):
+    if os.path.exists(file_path) and os.path.isfile(file_path):
         file_info = os.stat(file_path)
         size = file_info.st_size
         name = os.path.basename(file_path)
@@ -21,6 +21,38 @@ def filehash(file_path):
         return md5(string.encode('utf-8')).hexdigest()
     else:
         raise FileNotFoundError(f"{file_path} is not a file")
+
+
+# Creating action instance according to its reference File.xdb#xpointer(/Type)
+def classInstanceByXpointerType(xpointer):
+    if "#n:inline" in xpointer:
+        base = xpointer.split("#n:inline")[1]
+    elif "#xpointer" in xpointer:
+        base = xpointer.split("#xpointer")[1]
+    else:
+        raise AttributeError("Invalid xpointer! (" + xpointer + ")")
+    class_name = base.replace('(/', '').replace('(', '').replace(')', '')
+    cls = global_types.get(class_name)
+    if cls is not None:
+        return cls
+    else:
+        raise AttributeError("Invalid xpointer class! (" + class_name + ")")
+
+
+def fileReferenceByXpointerType(context, xpointer):
+    def makeAbsolute(context, ref):
+        ref = ref.replace('\\', '/')
+        if not ref.startswith('/'):
+            if not self.context.startswith('/'):
+                ref = '/' + os.path.join(self.context, ref)
+            else:
+                ref = os.path.join(self.context, ref)
+        return ref.replace('\\', '/')
+
+    file_ref = xpointer.split("#xpointer")[0].replace("\\", "/")
+    file_ref = makeAbsolute(context, file_ref)
+
+    return file_ref
 
 
 class HeroesVFileInspector:
@@ -240,7 +272,7 @@ class HeroesVFileInspector:
 
 
 if __name__ == "__main__":
-    my_inspc = HeroesVFileInspector("S:\\Games\\Nival Interactive\\Heroes of Might and Magic V - Tribes of the East\\")
+    my_inspc = HeroesVFileInspector("D:\\Nival Interactive\\Heroes of Might and Magic V - Tribes of the East\\")
 
     my_inspc.updateIndexes()
     # my_inspc.updateTypes()
