@@ -88,10 +88,12 @@ class HeroesVFileInspector:
         "talkbox_close_modes": {'ids': {}, 'server_ptr': '10000006'},
     }
 
-    def __init__(self, game_root, indexed_places_file=default_indexed_places):
+    def __init__(self, game_root, indexed_places_file=default_indexed_places, hold_mode=False):
         self.game_root = game_root
         if not self.__isHeroesV():
             raise NotADirectoryError("Current directory is not a Heroes V game folder!")
+        self.__hold_mode = hold_mode
+        self.__used_seekers = {}
         self.unindexed_places = []
         self.indexes_dictionary = {}
         self.indexed_places_file = indexed_places_file
@@ -181,6 +183,8 @@ class HeroesVFileInspector:
             if to_del:
                 print(f"> Flushing unused index place: {dir}...")
                 shutil.rmtree(os.path.join(self.indexes_dir, dir))
+        for used_seeker in self.__used_seekers.values():
+            used_seeker.free()
 
     # Simple check whether chosen folder is Heroes V game folder
     #
@@ -221,15 +225,28 @@ class HeroesVFileInspector:
                     if any_file.endswith(extension):
                         file_hash = filehash(file_abs_path)
                         index = self.__getIndex(file_hash)
-                        # If no index for this archive, use default seeker
-                        if index is None:
-                            # print(f"> Unindexed place: {any_file} | {file_hash}")
-                            seeker = ArchivesSeeker(inspected_folder, any_file)
-                            self.unindexed_places.append(file_abs_path)
-                        else:
-                            # print(f"> Indexed place: {any_file} | {file_hash}")
-                            seeker = IndexedArchiveSeeker(inspected_folder, any_file, index)
-                            pass
+                        seeker = None
+
+                        # In hold mode, archive seekers are saved into inspector memory
+                        if self.__hold_mode:
+                            if file_abs_path in self.__used_seekers.keys():
+                                seeker = self.__used_seekers.get(file_abs_path)
+
+                        # If no seeker was pre-found (not hold mode or first usage either)
+                        if seeker is None:
+                            # If no index for this archive, use default seeker
+                            if index is None:
+                                # print(f"> Unindexed place: {any_file} | {file_hash}")
+                                seeker = ArchivesSeeker(inspected_folder, any_file)
+                                self.unindexed_places.append(file_abs_path)
+                            else:
+                                # print(f"> Indexed place: {any_file} | {file_hash}")
+                                seeker = IndexedArchiveSeeker(inspected_folder, any_file, index)
+                                pass
+                            if self.__hold_mode:
+                                seeker.hold()
+                                self.__used_seekers[file_abs_path] = seeker
+
                         mtime = seeker.getmtime(rel_path)
                         if mtime > last_modification_time:
                             final_seeker = seeker
@@ -272,14 +289,16 @@ class HeroesVFileInspector:
 
 
 if __name__ == "__main__":
-    my_inspc = HeroesVFileInspector("D:\\Nival Interactive\\Heroes of Might and Magic V - Tribes of the East\\")
+    my_inspc = HeroesVFileInspector("D:\\Nival Interactive\\Heroes of Might and Magic V - Tribes of the East\\",
+                                    hold_mode=True)
 
     my_inspc.updateIndexes()
     # my_inspc.updateTypes()
 
     now = time.time()
-    repeats = 10
+    repeats = 100
     file = []
     for i in range(repeats):
-        file = my_inspc.get("types.xml")
-    print(f"{repeats} searches time: {time.time() - now} with {(time.time() - now)/repeats} average search time")
+        file = my_inspc.get("GameMechanics/RPGStats/DefaultStats.xdb")
+    end = time.time()
+    print(f"{repeats} searches time: {end - now} with {(end - now)/repeats} average search time")

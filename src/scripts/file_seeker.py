@@ -46,63 +46,97 @@ class FolderSeeker(SimpleSeeker):
         return contents
 
 
+def formatToArchivePath(relative_path):
+    # Reduce relative path to the form ZipFile.namelist() provides:
+    # No start slash, all slashes straight '/'
+    #
+    if relative_path.startswith("/"):
+        relative_path = relative_path.replace("/", '', 1)
+    relative_path = relative_path.replace("\\", "/")
+    return relative_path
+
+
 class ArchivesSeeker(SimpleSeeker):
 
     def __init__(self, root, archive):
         super().__init__(root)
         self.archive_path = os.path.join(root, archive)
+        self.__opened_archive = None
+        self._hold_mode = False
+
+    def _open_archive(self):
+        if self.__opened_archive is None:
+            self.__opened_archive = zipfile.ZipFile(self.archive_path, 'r')
+        return self.__opened_archive
+
+    def _close_archive(self):
+        if not self.__opened_archive:
+            raise RuntimeError(f"Archive {self.archive_path} not opened")
+        try:
+            self.__opened_archive.close()
+        finally:
+            self.__opened_archive = None
+
+    def __del__(self):
+        if self.__opened_archive:
+            self._close_archive()
+
+    def __enter__(self):
+        self._open_archive()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._close_archive()
+
+    def hold(self):
+        if not self._hold_mode:
+            self._hold_mode = True
+        else:
+            raise RuntimeError(f'Archive seeker ({self.archive_path}) already in hold mode!')
+
+    def free(self):
+        if self._hold_mode:
+            self._hold_mode = False
+        else:
+            raise RuntimeError(f'Archive seeker ({self.archive_path}) already freed!')
 
     def getmtime(self, relative_path):
-        # Reduce relative path to the form ZipFile.namelist() provides:
-        # No start slash, all slashes straight '/'
-        #
-        if relative_path.startswith("/"):
-            relative_path = relative_path.replace("/", '', 1)
-        relative_path = relative_path.replace("\\", "/")
 
-        with zipfile.ZipFile(self.archive_path, 'r') as archive:
-            for archived_file in archive.namelist():
-                if archived_file == relative_path:
-                    modificationTime = datetime(*archive.getinfo(archived_file).date_time).timestamp()
-                    return modificationTime
-                    # print(f"> Found file in archive '{item}' "
-                    #       f"({relative_path} | {datetime.fromtimestamp(self.lastModificationTime)})")
+        archive = self._open_archive()
+        relative_path = formatToArchivePath(relative_path)
+        modificationTime = 0.0
 
-        return 0.0
+        if relative_path in archive.namelist():
+            modificationTime = datetime(*archive.getinfo(relative_path).date_time).timestamp()
+        if not self._hold_mode:
+            self._close_archive()
+
+        return modificationTime
 
     def getfile(self, relative_path):
-        # Reduce relative path to the form ZipFile.namelist() provides:
-        # No start slash, all slashes straight '/'
-        #
-        if relative_path.startswith("/"):
-            relative_path = relative_path.replace("/", '', 1)
-        relative_path = relative_path.replace("\\", "/")
 
+        archive = self._open_archive()
+        relative_path = formatToArchivePath(relative_path)
         contents = None
 
-        with zipfile.ZipFile(self.archive_path, 'r') as archive:
-            for archived_file in archive.namelist():
-                if archived_file == relative_path:
-                    lastSeekedFile = archive.open(relative_path, 'r')
-                    contents = lastSeekedFile.readlines()
-                    # list(map( lambda bstr: bstr.decode("utf-8", errors='ignore').replace('\r\n', '\n'),
-                    # lastSeekedFile.readlines()) )
-                    lastSeekedFile.close()
-                    # print(f"> Found file in archive '{item}' "
-                    #       f"({relative_path} | {datetime.fromtimestamp(self.lastModificationTime)})")
-                    break
+        if relative_path in archive.namelist():
+            lastSoughtFile = archive.open(relative_path, 'r')
+            contents = lastSoughtFile.readlines()
+            # list(map( lambda bstr: bstr.decode("utf-8", errors='ignore').replace('\r\n', '\n'),
+            # lastSoughtFile.readlines()) )
+            lastSoughtFile.close()
+
+        if not self._hold_mode:
+            self._close_archive()
 
         if contents is None:
             raise FileNotFoundError(f"No file '{relative_path}' found in archive '{self.archive_path}'")
         return contents
 
 
-class IndexedArchiveSeeker(SimpleSeeker):
+class IndexedArchiveSeeker(ArchivesSeeker):
 
     def __init__(self, root, archive, index):
-        super().__init__(root)
-
-        self.archive_path = os.path.join(root, archive)
+        super().__init__(root, archive)
 
         if not os.path.exists(index):
             raise FileNotFoundError(f"{index} is not an index")
@@ -127,16 +161,18 @@ class IndexedArchiveSeeker(SimpleSeeker):
         with self.ix.searcher() as searcher:
             query = QueryParser('filepath', self.schema).parse(relative_path)
             results = searcher.search(query)
+            archive = self._open_archive()
             for result in results:
                 file_path = result['filepath']
-                with zipfile.ZipFile(self.archive_path, 'r') as archive:
-                    with archive.open(file_path) as file:
-                        try:
-                            contents = file.readlines()
-                            # list(map(lambda bstr: bstr.decode("utf-8", errors='ignore').replace('\r\n', '\n'),
-                            #     file.readlines()))
-                        except Exception as error:
-                            print(file_path)
+                with archive.open(file_path) as file:
+                    try:
+                        contents = file.readlines()
+                        # list(map(lambda bstr: bstr.decode("utf-8", errors='ignore').replace('\r\n', '\n'),
+                        #     file.readlines()))
+                    except Exception as error:
+                        print(file_path)
+            if not self._hold_mode:
+                self._close_archive()
 
         if contents is None:
             raise FileNotFoundError(f"Index search result not found in {self.archive_path}")
@@ -146,13 +182,14 @@ class IndexedArchiveSeeker(SimpleSeeker):
 if __name__ == "__main__":
     try:
 
-        game_folder = "S:/Games/Nival Interactive/Heroes V Clear Version/data/"
+        game_folder = "D:/Nival Interactive/Heroes V Clear Version/data/"
         searched_file = "GameMechanics/RPGStats/DefaultStats.xdb"
 
         # seeker = FolderSeeker(game_folder)
         seeker = ArchivesSeeker(game_folder, "data.pak")
+        seeker.hold()
         # seeker = IndexedArchiveSeeker(game_folder, './../indexdir', Schema(filepath=ID(stored=True),
-        #                                                                            zipfile_name=ID(stored=True)))
+        #                                                                    zipfile_name=ID(stored=True)))
 
         summ = 0
         repeats = 10
@@ -165,8 +202,8 @@ if __name__ == "__main__":
             end = time.time()
             summ += end - start
 
+        # seeker.free()
         print(f"Average working time: {summ / repeats}")
 
     except FileNotFoundError as error:
         print(error)
-
