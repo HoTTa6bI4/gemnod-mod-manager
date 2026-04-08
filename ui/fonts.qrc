@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="common/fonts">
+    <file>../fonts/Monotype-Corsiva-Bold.ttf</file>
+  </qresource>
+</RCC>

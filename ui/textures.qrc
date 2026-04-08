@@ -1,0 +1,76 @@
+<RCC>
+  <qresource prefix="common/frame">
+    <file>../textures/BorderImage-Frame.png</file>
+    <file>../textures/BorderImage-FrameDisabled.png</file>
+  </qresource>
+  <qresource prefix="common/scroll-bar">
+    <file>../textures/Image-ScrollBarArrowLeftActive.png</file>
+    <file>../textures/Image-ScrollBarArrowLeftDisabled.png</file>
+    <file>../textures/Image-ScrollBarArrowLeftPressed.png</file>
+    <file>../textures/Image-ScrollBarArrowRightActive.png</file>
+    <file>../textures/Image-ScrollBarArrowRightDisabled.png</file>
+    <file>../textures/Image-ScrollBarArrowRightPressed.png</file>
+    <file>../textures/BorderImage-HorScrollBarDisabled.png</file>
+    <file>../textures/BorderImage-VerScrollBarDisabled.png</file>
+    <file>../textures/BorderImage-HorScrollBar.png</file>
+    <file>../textures/BorderImage-VerScrollBar.png</file>
+    <file>../textures/Image-ScrollBarArrowDownActive.png</file>
+    <file>../textures/Image-ScrollBarArrowDownDisabled.png</file>
+    <file>../textures/Image-ScrollBarArrowDownPressed.png</file>
+    <file>../textures/Image-ScrollBarArrowUpActive.png</file>
+    <file>../textures/Image-ScrollBarArrowUpDisabled.png</file>
+    <file>../textures/Image-ScrollBarArrowUpPressed.png</file>
+    <file>../textures/Image-ScrollBarHandlerActive.png</file>
+    <file>../textures/Image-ScrollBarHandlerDisabled.png</file>
+    <file>../textures/Image-ScrollBarHandlerPressed.png</file>
+  </qresource>
+  <qresource prefix="common/line-edit">
+    <file>../textures/BorderImage-LineEdit.png</file>
+    <file>../textures/BorderImage-LineEditDisabled.png</file>
+  </qresource>
+  <qresource prefix="common/group-box">
+    <file>../textures/BorderImage-GroupBox.png</file>
+    <file>../textures/BorderImage-GroupBoxDisabled.png</file>
+    <file>../textures/BorderImage-GroupBox2.png</file>
+    <file>../textures/BorderImage-GroupBox2Disabled.png</file>
+    <file>../textures/BorderImage-GroupBoxTitle.png</file>
+  </qresource>
+  <qresource prefix="common/combo-box">
+    <file>../textures/BorderImage-ComboBox.png</file>
+    <file>../textures/BorderImage-ComboBoxDisabled.png</file>
+    <file>../textures/BorderImage-ComboBoxDropDownActive.png</file>
+    <file>../textures/BorderImage-ComboBoxDropDownDisabled.png</file>
+    <file>../textures/BorderImage-ComboBoxDropDownPressed.png</file>
+  </qresource>
+  <qresource prefix="common/table">
+    <file>../textures/BorderImage-HeaderView.png</file>
+    <file>../textures/BorderImage-HeaderViewDisabled.png</file>
+    <file>../textures/BorderImage-TableView.png</file>
+    <file>../textures/BorderImage-TableViewDisabled.png</file>
+  </qresource>
+  <qresource prefix="common/push-button">
+    <file>../textures/BorderImage-Button.png</file>
+    <file>../textures/BorderImage-ButtonDisabled.png</file>
+    <file>../textures/BorderImage-ButtonPressed.png</file>
+  </qresource>
+  <qresource prefix="common/check-box">
+    <file>../textures/Image-CheckBoxCheckedDisabled.png</file>
+    <file>../textures/Image-CheckBoxCheckedEnabled.png</file>
+    <file>../textures/Image-CheckBoxUncheckedDisabled.png</file>
+    <file>../textures/Image-CheckBoxUncheckedEnabled.png</file>
+  </qresource>
+  <qresource prefix="mods/operations/central-button">
+    <file>../textures/DownloadAndInstall.png</file>
+    <file>../textures/Uninstall.png</file>
+  </qresource>
+  <qresource prefix="mods/operations/side-buttons">
+    <file>../textures/Enable.png</file>
+    <file>../textures/Disable.png</file>
+    <file>../textures/Update.png</file>
+    <file>../textures/Reload.png</file>
+    <file>../textures/Info.png</file>
+  </qresource>
+  <qresource prefix="mods/jog-dial">
+    <file>../textures/JogDial.png</file>
+  </qresource>
+</RCC>

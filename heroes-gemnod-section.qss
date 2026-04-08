@@ -1,0 +1,67 @@
+PathBrowser {
+    border-image: none;
+    border: 5px;
+}
+
+/*-----QGroupBox------*/
+/*---Version with scroll---*/
+/*.QGroupBox {
+    border-image: url(:/common/group-box/textures/BorderImage-GroupBox2.png) repeat;
+    border-left: 113px;
+    border-right: 108px;
+    border-top: 54px;
+    border-bottom: 60px;
+    padding-left: -98px;
+    padding-right: -95px;
+    padding-top: -20px;
+    padding-bottom: -30px;
+}*/
+.QGroupBox {
+    border-left: 5px;
+    border-right: 5px;
+    border-top: 5px;
+    border-bottom: 5px;
+    padding-top: 40px;
+}
+/*----Version with scroll----*/
+/*.QGroupBox:disabled {
+    border-image: url(:/common/group-box/textures/BorderImage-GroupBox2Disabled.png) repeat;
+}*/
+.QGroupBox::title {
+    border-image: url(:/common/group-box/textures/BorderImage-GroupBoxTitle.png) repeat;
+    border-left: 35px;
+    border-right: 35px;
+    border-top: 7px;
+    border-bottom: 7px;
+    color: #c5bea1;
+}
+.QGroupBox::title:disabled {
+    color: #7c7f87;
+}
+
+.QGroupBox QWidget {
+    color: #fff;
+    /*color: #36486e;*/
+}
+.QGroupBox QWidget:disabled {
+    color: #c0c0c0;
+    /*color: #7c7f87;*/
+}
+
+
+QTextEdit {
+    border-image: url(:/common/group-box/textures/BorderImage-GroupBox2.png) repeat;
+    border-left: 113px;
+    border-right: 108px;
+    border-top: 54px;
+    border-bottom: 60px;
+    padding-left: -98px;
+    padding-right: -95px;
+    padding-top: -20px;
+    padding-bottom: -30px;
+    color: #36486f;
+}
+QTextEdit:disabled {
+    border-image: url(:/common/group-box/textures/BorderImage-GroupBox2Disabled.png) repeat;
+    color: #7c7f87;
+}
