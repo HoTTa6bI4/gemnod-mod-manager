@@ -1,6 +1,6 @@
 import os
 import shutil
-from file_seeker import *
+from src.scripts.file_seeker import *
 from hashlib import md5
 from xml.etree import ElementTree as ET
 

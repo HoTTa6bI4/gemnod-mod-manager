@@ -2,6 +2,6 @@
 .idea/
 /index/
 **/__pycache__/
-/textures/
+#/textures/
 /raw_textures/
-/fonts/
+#/fonts/

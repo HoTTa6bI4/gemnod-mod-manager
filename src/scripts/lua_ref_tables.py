@@ -1,8 +1,15 @@
 from __future__ import annotations
+
+import time
 import xml.etree.ElementTree
 from xml.etree import ElementTree as ET
 from heroes_v_file_seeker import *
 from parse_error import ParseError
+from typing import Callable
+
+
+def isSimilarToID(value: str):
+    return value == value.upper()
 
 
 # Lua compatible XML-element, inherits xml.etree.Element
@@ -43,10 +50,16 @@ class LuaCompatibleElement(ET.Element):
                             value += f'{attribute} = "{value}"}}'
                         j += 1
             else:
+                value = self.text
                 try:
                     value = str(float(self.text))
                 except ValueError:  # if that was string, then...
-                    value = '\"' + self.text + '\"'
+                    if value.lower() == 'false':
+                        value = 'nil'
+                    elif value.lower() == 'true':
+                        value = 'not nil'
+                    elif not isSimilarToID(value):
+                        value = '\"' + self.text + '\"'
 
             strings[0] += value  # + ','
 
@@ -139,10 +152,13 @@ class TypesRefTablesParser:
             raise ParseError("Heroes V File Inspector not provided!")
         self.inspector = inspector
 
-    def iterparse(self, names_filter=None):
+    def iterparse(self,
+                  #  id_handler: Callable[[str, int], str],  # enum id additional processing
+                  script_handler: Callable[[list[str]], list[str]],  # generated script after-processing
+                  table_names_filter: Optional[function] = None):
 
-        if names_filter is None:
-            def names_filter(s):
+        if table_names_filter is None:
+            def table_names_filter(s):
                 return s
 
         if self.getInspector() is None:
@@ -165,7 +181,7 @@ class TypesRefTablesParser:
 
             table_path = fileReferenceByXpointerType('', XPointer.text)
             table_name = os.path.basename(table_path)
-            if not names_filter(table_name):
+            if not table_names_filter(table_name):
                 continue
             uids = set()
 
@@ -184,12 +200,21 @@ class TypesRefTablesParser:
                     if len(id) > max_id_len:
                         max_id_len = len(id)
 
+            i = 0
             for enum_entry in enum_entries:
                 id = enum_entry.text
                 if id is None or id == '':
                     raise ParseError(f'Enumeration entry missed for {table_path}', table_path)
-                LuaIDsTableContents.append(f'{id: <{max_id_len}} = {id: <{max_id_len}} or "{id}"')
+                string_id = '\"' + id + '\"'
+                LuaIDsTableContents.append(f'{id: <{max_id_len}} = {{num = {i: <3}, str = {string_id: <{max_id_len+2}}}}')
+                i += 1
                 uids.add(id)
+
+            LuaIDsTableContents = script_handler(LuaIDsTableContents)
+
+            end_time = time.time()
+            print(f"> Completed {table_name.replace('.xdb', '.id.lua')} in {end_time - start_time}")
+            start_time = time.time()
 
             # Creating .lua reference table
             ReferenceTable = TypesRefTablesParser.XdbReferenceTable(self.inspector, table_path, uids)
@@ -200,9 +225,13 @@ class TypesRefTablesParser:
                 fields = ET.fromstringlist(
                     object_item.getContents(),
                     parser=ET.XMLParser(target=ET.TreeBuilder(element_factory=LuaCompatibleElement)))
-                LuaRefTableContents.extend(fields.toLuaVariable(tab='\t', variable_name=f'[{id}]'))
+                lua_fields = fields.toLuaVariable(tab='\t', variable_name=f'[{id}]')
+                lua_fields[-1] += ','
+                LuaRefTableContents.extend(lua_fields)
 
             LuaRefTableContents.append(f'}}')
+
+            LuaRefTableContents = script_handler(LuaRefTableContents)
 
             end_time = time.time()
             print(f"> Completed {table_name.replace('.xdb', '.lua')} in {end_time - start_time}")
@@ -218,12 +247,24 @@ if __name__ == "__main__":
         my_inspc.updateIndexes()
 
         my_lua_tables_creator = TypesRefTablesParser(my_inspc)
+
+        def addImportInfo(required_imports):
+            return lambda script: required_imports + [
+                '--',
+                '-- auto-generated, do not modify',
+                '--'
+            ] + script + ['\n', '__end_import()']
+
         for table_name, lua_contents, ids_contents in \
                 my_lua_tables_creator.iterparse(
-                    lambda s: True if ('Creatures' in s) else False
+                    script_handler=addImportInfo([]),
+                    table_names_filter=lambda s: True if ('Creatures' in s) else False
                 ):
-            with open(os.path.join('../generated/lua-libs/', table_name.replace('.xdb', '.lua')), 'w+') as lua_lib, \
-                    open(os.path.join('../generated/lua-libs/', table_name.replace('.xdb', '.id.lua')), 'w+') as ids_lib:
+            ids_filename = table_name.replace('.xdb', '.ids.lua').lower()
+            ref_table_filename = table_name.replace('.xdb', '.lua').lower()
+            with open(os.path.join('../generated/lua-libs/', ref_table_filename), 'w+') as lua_lib, \
+                    open(os.path.join('../generated/lua-libs/', ids_filename),
+                         'w+') as ids_lib:
                 lua_lib.write('\n'.join(lua_contents))
                 ids_lib.write('\n'.join(ids_contents))
             # input()
