@@ -1,14 +1,17 @@
+import tempfile
 import xml.etree.ElementTree
 from dataclasses import dataclass
 import queue
 import requests
 import os
+from pathlib import Path
 import shutil
 from hashlib import sha256
 from zipfile import ZipFile, BadZipfile
-from src.scripts.heroes_v_file_seeker import filehash
+# from src.scripts.heroes_v_file_seeker import filehash
 from xml.etree import ElementTree as ET
-from typing import Optional
+from typing import Optional, Dict
+from hashlib import sha256
 
 
 # As will be used below, a return value that is indicating artificial internal
@@ -25,11 +28,12 @@ class Progress:
         return round(self.passed / self.total * 100, 2)
 
 
-# def fileContentHash(abs_path):
-#     if not os.path.exists(abs_path) or not os.path.isfile(abs_path):
-#         raise FileNotFoundError(f"File '{abs_path}' not found!")
-#     with open(abs_path, 'rb') as file:
-#         return sha256(file.read()).hexdigest()
+def filehash(filepath):
+    if os.path.exists(filepath) and os.path.isfile(filepath):
+        with open(filepath, 'rb') as file:
+            return sha256(file.read()).hexdigest()
+    else:
+        raise FileNotFoundError(f"{filepath} is not a file")
 
 
 class ModManager:
@@ -41,18 +45,23 @@ class ModManager:
         class ModVersion:
 
             def __init__(self, version_name: str, download_url: str,
+                         source_hash: str,
                          manifest: dict[str, str],
+                         download_folder="./",
                          temporary_storage="./",
                          installation_folder="./"):
                 if download_url is None:
                     raise ModManager.ManagementError("Donwload URL missed") from ValueError
                 self.name = version_name
                 self.download_url = download_url
+                self.download_folder = download_folder
                 self.temporary_storage = temporary_storage
-                self.destination = installation_folder
-                self.manifest = manifest
-                self.package_path = ''
-                self.package_namelist = []
+                self.installation_folder = installation_folder
+                self.source_hash = source_hash
+                self.contents_manifest = manifest
+                self.package_path = os.path.join(self.download_folder, self.name + '.zip')
+                self.package_namelist = list(self.contents_manifest.keys())
+                self.__package_size = None
                 self.__downloaded = False
                 self.__installed = False
                 self.__enabled = False
@@ -64,8 +73,8 @@ class ModManager:
                     return False
                 if self.download_url != other.download_url:
                     return False
-                for file, hash in self.manifest.keys():
-                    if other.manifest.get(file) != hash:
+                for file, hash in self.contents_manifest.items():
+                    if other.contents_manifest.get(file) != hash:
                         return False
                 return True
 
@@ -73,7 +82,7 @@ class ModManager:
                 return not self.__eq__(other)
 
             def isDownloaded(self):
-                return self.__enabled
+                return self.__downloaded
 
             def isInstalled(self):
                 return self.__installed
@@ -85,14 +94,15 @@ class ModManager:
                 return not self.__enabled and self.__installed
 
             def consistencyInFolder(self, folder):
-                if len(self.manifest.keys()) == 0:
+                if len(self.contents_manifest.keys()) == 0:
                     return 0
                 matches = 0
-                entries = len(self.manifest)
-                for rel_path, standard_hash in self.manifest.items():
+                entries = len(self.contents_manifest)
+                for rel_path, standard_hash in self.contents_manifest.items():
                     abs_path = os.path.join(folder, rel_path)
                     if os.path.exists(abs_path):
                         # Only files are counted
+                        # print(f"Real {filehash(abs_path)} | Iconic {standard_hash}")
                         if filehash(abs_path) == standard_hash:
                             matches += 1
                 if entries == 0:
@@ -100,60 +110,67 @@ class ModManager:
                 return matches / entries
 
             def updateState(self):
+                # Check downloaded package
+                if os.path.exists(self.package_path):
+                    # print(f"Real {filehash(self.package_path)} | Iconic {self.source_hash}")
+                    if filehash(self.package_path) == self.source_hash:
+                        self.__downloaded = True
+                else:
+                    self.__downloaded = False
                 # Check installation folder
-
-                if self.consistencyInFolder(self.destination) == 1:
-                    self.__downloaded = True
-                    self.__enabled = True
-                    self.__installed = True
+                if self.consistencyInFolder(self.installation_folder) == 1:
+                    self.__installed = self.__enabled = True
                 # todo: add 'installed but modified' state of mod version
                 # elif consistency >= 0.95:
                 #     pass
+                # Check temporary folder
+                elif self.consistencyInFolder(self.temporary_storage):
+                    self.__installed = True
+                    self.__enabled = False
                 else:
-                    if self.consistencyInFolder(self.temporary_storage):
-                        self.__downloaded = True
-                        self.__installed = False
-                        self.__enabled = False
-                return self.__installed, self.__downloaded, self.__enabled
- 
+                    self.__installed = self.__enabled = False
+
+                return self.__downloaded, self.__installed, self.__enabled
+
             def download(self):
                 self.updateState()
                 if not self.__downloaded:
                     try:
                         response = requests.get(self.download_url, timeout=10, stream=True)
-                    except requests.RequestException:
-                        raise
+                    except requests.RequestException as err:
+                        raise ModManager.ManagementError(str(err)) from err
                     else:
                         if response.status_code == 200:
-                            temporary_file_name = self.name + '.bin'
 
                             # Get file name from response metadata (HTTP headers)
-                            if 'content-disposition' in response.headers.keys():
-                                content_disposition = response.headers.get('content-disposition')
-                                if 'attachment' in content_disposition or 'inline' in content_disposition:
-                                    if 'filename=' in content_disposition:
-                                        temporary_file_name = content_disposition.split('filename=')[1].strip('\'\"')
-                            elif 'application/' in response.headers.get('content-type'):
-                                temporary_file_name = self.download_url.split('/')[-1]
+                            # if 'content-disposition' in response.headers.keys():
+                            #     content_disposition = response.headers.get('content-disposition')
+                            #     if 'attachment' in content_disposition or 'inline' in content_disposition:
+                            #         if 'filename=' in content_disposition:
+                            #             temporary_file_name = content_disposition.split('filename=')[1].strip('\'\"')
+                            # elif 'application/' in response.headers.get('content-type'):
+                            #     temporary_file_name = self.download_url.split('/')[-1]
 
                             # Save downloaded file to local
+                            print(f"Downloading to '{self.package_path}'")
+
                             file_size = int(response.headers.get('content-length'))
                             written = 0
                             yield Progress(written, file_size, 'Downloading')
 
-                            self.package_path = os.path.join(self.temporary_storage, temporary_file_name)
                             with open(self.package_path, 'wb') as temporary_file:
                                 for chunk in response.iter_content(chunk_size=262144):  # iter by 256 kb
                                     written += len(chunk)
                                     temporary_file.write(chunk)
                                     yield Progress(written, file_size, 'Downloading')
+                                self.__package_size = file_size
                                 self.__downloaded = True
                         else:
-                            raise ConnectionError(f"Failed to download mod version: {self.download_url}"
-                                                  f"(ERROR: {response.status_code})")
+                            err_msg = f"Failed to download mod version: {self.download_url}"
+                            raise ModManager.ManagementError(err_msg) from\
+                                ConnectionError(f"Error server unexpected response (ERROR {response.status_code})")
 
             def install(self):
-                self.updateState()
                 # If no package downloaded, download it
                 if not self.__downloaded:
                     for progress in self.download():
@@ -165,8 +182,8 @@ class ModManager:
                     yield Progress(0, file_size, 'Unpacking')
                     try:
                         with ZipFile(self.package_path, 'r') as installed_package:
-                            self.package_namelist = installed_package.namelist()
-                            installed_package.extractall(self.destination)
+                            # self.package_namelist = installed_package.namelist()
+                            installed_package.extractall(self.installation_folder)
                         yield Progress(file_size, file_size, 'Unpacked')
                         self.__installed = True
                         self.__enabled = True
@@ -177,55 +194,55 @@ class ModManager:
                         yield _
 
             def _movePackages(self, src, dst):
-                self.updateState()
+
+                print(f"Asked to move ALL from {src} to {dst}")
 
                 objects_total = len(self.package_namelist)
                 objects_moved = 0
-                dirs_total = 0
-                dirs_removed = 0
                 moved_packages = []
 
                 for rel_path in self.package_namelist:
                     old_path = os.path.join(src, rel_path)
                     new_path = os.path.join(dst, rel_path)
+                    # print(f"Moving {old_path} to {new_path}")
                     objects_moved += 1
-                    if os.path.isdir(old_path):
-                        dirs_total += 1
-                        os.makedirs(new_path, exist_ok=True)
-                    elif os.path.isfile(old_path):
-                        try:
-                            os.replace(old_path, new_path)
-                            moved_packages.append((old_path, new_path))
-                        # If any errors,
-                        # Rollback all moved files
-                        except (OSError, PermissionError) as exc:
-                            for old, new in moved_packages:
-                                os.replace(new, old)
-                            raise ModManager.ManagementError(f"An error occurred while trying "
-                                                             f"to operate with '{old_path}'."
-                                                             f"Close all applications that might "
-                                                             f"use this file") from exc
 
-                    yield Progress(objects_moved, objects_total, 'Disabling')
+                    if not os.path.exists(os.path.dirname(new_path)):
+                        os.makedirs(os.path.dirname(new_path), exist_ok=True)
+                    try:
+                        os.replace(old_path, new_path)
+                        moved_packages.append((old_path, new_path))
+                    # If any errors,
+                    # rollback all moved files
+                    except (OSError, PermissionError) as exc:
+                        for old, new in moved_packages:
+                            os.replace(new, old)
+                        raise ModManager.ManagementError(f"An error occurred while trying "
+                                                         f"to operate with '{old_path}'."
+                                                         f"Close all applications that might "
+                                                         f"use this file") from exc
+
+                    yield Progress(objects_moved, objects_total, 'Moving packages')
 
                 for rel_path in reversed(self.package_namelist):
-                    old_path = os.path.join(src, rel_path)
-                    if os.path.isdir(old_path):
-                        if len(os.listdir(old_path)) == 0:
-                            os.rmdir(old_path)
-                        dirs_removed += 1
-                        yield Progress(dirs_removed, dirs_total, 'Cleaning up')
+                    curr_dir = os.path.dirname(str(os.path.join(src, rel_path)))
+                    while os.path.isdir(curr_dir) and len(os.listdir(curr_dir)) == 0:
+                        os.rmdir(curr_dir)
+                        curr_dir = os.path.dirname(curr_dir)
+                        yield Progress(0, 0, 'Cleaning up')
 
             def disable(self):
+                print(f"Enabled: {self.__enabled}")
                 if self.__enabled:
                     self.__enabled = False
-                    for _ in self._movePackages(self.destination, self.temporary_storage):
+                    for _ in self._movePackages(self.installation_folder, self.temporary_storage):
                         yield _
 
             def enable(self):
-                if self.__disabled:
+                print(f"Enabled: {self.__enabled}")
+                if not self.__enabled:
                     self.__enabled = True
-                    for _ in self._movePackages(self.temporary_storage, self.destination):
+                    for _ in self._movePackages(self.temporary_storage, self.installation_folder):
                         yield _
 
             def uninstall(self):
@@ -234,7 +251,7 @@ class ModManager:
                     self.__installed = False
                     objects_total = len(self.package_namelist) + 1
                     objects_removed = 0
-                    cleaned_dir = self.temporary_storage if not self.__enabled else self.destination
+                    cleaned_dir = self.temporary_storage if not self.__enabled else self.installation_folder
                     for rel_path in reversed(self.package_namelist):
                         abs_path = os.path.join(cleaned_dir, rel_path)
                         objects_removed += 1
@@ -271,9 +288,9 @@ class ModManager:
                         index = i
                         break
             else:
-                raise TypeError(f"Invalid object type '{type(version)}."
-                                f" 'int' index, or 'str' object name, or 'ModManager.SupportedMod.ModVersion' instance"
-                                f" expected")
+                err_msg = f"Invalid object type '{type(version)}. 'int' index, or 'str' version name expected"
+                raise ModManager.ManagementError(err_msg) from\
+                    TypeError(err_msg)
             return self.versions[index]
 
         def addVersion(self, version: ModVersion):
@@ -286,7 +303,6 @@ class ModManager:
 
         def getInstalledVersion(self):
             for version in self.versions:
-                version.updateInstalled()
                 if version.isInstalled():
                     return version
             return None
@@ -300,7 +316,7 @@ class ModManager:
             current = self.getInstalledVersion()
             if current == version:
                 yield Progress(0, 0, 'Installed already')
-            else:
+            elif current is not None:
                 for progress in current.disable():
                     yield progress
 
@@ -352,9 +368,14 @@ class ModManager:
             for progress in target.install():
                 yield progress
 
-    def __init__(self, mod_db_url):
+    def __init__(self, mod_db_url, mods_folder: str = ''):
         self.url = mod_db_url
-        self.mods = {}
+        self.mods: Dict[str, ModManager.SupportedMod] = {}
+        self.download_folder = str(Path.home() / "Downloads/")
+        self.game_mods_folder = mods_folder
+        self.temporary_folder = os.path.join(tempfile.gettempdir(), "ModsManager/")
+        if not os.path.exists(self.temporary_folder):
+            os.mkdir(self.temporary_folder)
 
     def getAllMods(self):
         return self.mods
@@ -373,9 +394,10 @@ class ModManager:
         elif type(mod) is ModManager.SupportedMod:
             name = mod.name
         else:
-            raise TypeError(f"Invalid object type '{type(mod)}."
-                            f" 'str' object name or 'ModManager.SupportedMod' instance"
-                            f" expected")
+            err_msg = (f"Invalid object type '{type(version)}. 'str' object name or 'ModManager.SupportedMod' instance"
+                       f" expected")
+            raise ModManager.ManagementError(err_msg) from\
+                TypeError(err_msg)
         return self.mods.pop(name)
 
     # I suppose different possible ways to store mods DB.
@@ -383,14 +405,14 @@ class ModManager:
     def parseModDB(self):
         try:
             response = requests.get(self.url, timeout=10, allow_redirects=False)
-        except requests.RequestException:
-            raise
+        except requests.RequestException as err:
+            raise ModManager.ManagementError(str(err)) from err
         else:
             if response.status_code == 200:
                 try:
                     db_root = ET.fromstring(response.content)
-                except xml.etree.ElementTree.ParseError:
-                    raise
+                except xml.etree.ElementTree.ParseError as err:
+                    raise ModManager.ManagementError(str(err)) from err
                 else:
                     for mod_info in db_root.findall("ModInfo"):
                         name = mod_info.attrib.get('name')
@@ -400,12 +422,18 @@ class ModManager:
                         for version in mod_info.findall("Versions/Version"):
                             vname = version.attrib.get("v")
                             download_url = version.find("Download").attrib.get("url")
+                            archive_hash = version.find("Download").attrib.get("sha256")
                             manifest = {}
                             for item in version.findall("Manifest/Item"):
                                 file_rel_path = item.attrib.get('ref')
-                                file_hash = item.attrib.get('hash')
+                                file_hash = item.attrib.get('sha256')
                                 manifest[file_rel_path] = file_hash
-                            mod.addVersion(ModManager.SupportedMod.ModVersion(vname, download_url, manifest))
+                            mod.addVersion(
+                                ModManager.SupportedMod.ModVersion(vname, download_url, archive_hash, manifest,
+                                                                   download_folder=self.download_folder,
+                                                                   temporary_storage=self.temporary_folder,
+                                                                   installation_folder=self.game_mods_folder)
+                            )
                         self.addMod(mod)
 
             else:
@@ -415,6 +443,19 @@ class ModManager:
 
 
 if __name__ == "__main__":
-    manager = ModManager("http://localhost:8080/Gems.xml")
+    manager = ModManager("http://localhost:8080/Gems.xml", "C:/Users/ashtents/HTTP Server/Temporary")
     manager.parseModDB()
-    print(f"Removed {manager.removeMod('Gemnod').name}")
+    for mod in manager.getAllMods().values():
+        print(f"| {mod.name}")
+        print(f"| {mod.desc}")
+        print(f"|{mod.home_page}")
+        print(f"+{'-'*50}")
+    gemnod = manager.getMod("Gemnod")
+    for progress in gemnod.install():
+        print(f"{progress.desc:<12}", "------", f"{int(progress.percent()):>5}")
+    print(f"+{'-'*50}")
+    for progress in gemnod.disable():
+        print(f"{progress.desc:<12}", "------", f"{int(progress.percent()):>5}")
+    print(f"+{'-'*50}")
+    for progress in gemnod.enable():
+        print(f"{progress.desc:<12}", "------", f"{int(progress.percent()):>5}")

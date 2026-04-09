@@ -31,7 +31,15 @@ class ComboBoxDelegate(QStyledItemDelegate):
         model.setData(index, editor.currentText())
 
     def updateEditorGeometry(self, editor: QComboBox, option: QStyleOptionViewItem, index: QModelIndex):
-        editor.setGeometry(option.rect)
+        cell_height = option.rect.height()
+        editor_recommended_height = editor.sizeHint().height()
+        resulting_height = max(cell_height, editor_recommended_height)
+        size = option.rect.size()
+        size.setHeight(resulting_height)
+        editor.setGeometry(QRect(option.rect.topLeft(
+
+        ) - QPoint(0, (resulting_height-editor_recommended_height)/2),
+                                 size))
 
     def items(self):
         return self.factory()

@@ -10,9 +10,9 @@ and provides all patchers related to these mods.
 ## GEMNOD: GemOrange + ENOD
 **Brief**: 
 Expands game graphically and adds new elements to the gameplay.
-Provides blueprints creator that generates a new object from map objects according to specified filters. Created blueprints are further included as new static objects in mod version and become availiable for other users
+Provides blueprints creator that generates a new object from map objects according to specified filters. Created blueprints are further included as new static objects in mod version and become availiable for other users  
 **Developers**:
-  - [Xuxo](https://github.com/HoTTa6bI4)
+  - [Xuxo](https://github.com/xuxo)
   - [}{0TT@6bI4](https://github.com/HoTTa6bI4)
   - [Zahar0z](https://vk.com/club40470309)
 
@@ -23,10 +23,10 @@ Heroes V Map Editor new objects database, which gives users an opportunity to en
 
 ## GemBlue
 **Brief**
-...
+...  
 **Developers**:
-  - [Xuxo](URL to your social network)
-  - [Some more author](URL ...)
+  - [Xuxo](https://github.com/xuxo)
+  - [Some more authors] (URL...)
   
 
 ## Sratch

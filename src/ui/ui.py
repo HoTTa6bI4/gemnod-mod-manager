@@ -292,7 +292,7 @@ class GemnodModManager(object):
         self.disableModButton = QPushButton(self.modsJogDial)
         self.modInfoButton = QPushButton(self.modsJogDial)
 
-        self.managementProgress = QProgressDialog(self.parent)
+        # self.managementProgress = QProgressDialog(self.parent)
 
         self.gemnodSection = GemnodWidget(self.sectionsSplitter)
 
